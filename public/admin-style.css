@@ -1,0 +1,5890 @@
+/* ===================================================================== */
+/*                         ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ                          */
+/* ===================================================================== */
+:root {
+  --bg: #0e1117;          /* Фон приложения */
+  --panel: #11151c;       /* Фон панелей/блоков */
+  --text: #e5e9f0;        /* Основной текст */
+  --muted: #9aa0ac;       /* Тусклый текст */
+  --accent: #4ea6ff;      /* Акцентный цвет */
+  --border: #1f2530;      /* Цвет границ */
+  --danger: #ff5d5d;      /* Цвет ошибок */
+}
+
+/* ===================================================================== */
+/*                          БАЗОВЫЕ СТИЛИ СТРАНИЦЫ                        */
+/* ===================================================================== */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter","Segoe UI",Arial,sans-serif;
+  overflow: hidden; /* Блокирует прокрутку документа, используем scroll в контенте */
+}
+
+/* ===================================================================== */
+/*                           БОКОВАЯ НАВИГАЦИЯ                            */
+/* ===================================================================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 340px;         /* Можешь менять ширину панели */
+  height: 100vh;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+}
+
+.side-head {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding-left: 24px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* Кнопки навигации слева */
+.nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Кнопка раздела в навигации */
+.nav-btn {
+  position: relative;
+  width: 100%;
+  padding: 15px 18px 15px 26px;
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all .25s;
+}
+
+/* Синяя полоска слева у активного раздела */
+.nav-btn::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: height .25s;
+}
+
+/* При наведении */
+.nav-btn:hover {
+  background: rgba(78,166,255,0.08);
+  color: var(--accent);
+  transform: translateX(2px);
+}
+
+/* Активная вкладка */
+.nav-btn.active {
+  color: var(--accent);
+  background: rgba(78,166,255,0.12);
+  font-weight: 600;
+}
+.nav-btn.active::before {
+  height: 60%;
+}
+
+/* Кнопка «Выйти» */
+.logout-btn {
+  width: calc(100% - 28px);
+  margin: 14px;
+  padding: 15px 18px;
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .25s;
+}
+
+.logout-btn:hover {
+  background: rgba(255,93,93,0.08);
+  color: var(--danger);
+  transform: translateX(2px);
+}
+
+/* ===================================================================== */
+/*                          ОСНОВНАЯ РАБОЧАЯ ОБЛАСТЬ                      */
+/* ===================================================================== */
+.main {
+  position: absolute;
+  top: 72px;   /* Чуть выше, но без захода под верхний блок */
+  left: 340px; /* Старт после боковой панели */
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 50px 30px;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+section {
+  display: none;
+  margin-top: 0;
+  padding-top: 2px;
+}
+
+section.active {
+  display: block;
+}
+
+/* ===================================================================== */
+/*                                 TOOLBAR                                */
+/* ===================================================================== */
+.toolbar {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.toolbar .spacer {
+  flex: 1; /* Отталкивает элементы вправо */
+}
+
+/* Поля ввода */
+.input, .select {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #0c0f15;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 15px;
+  transition: border .25s, box-shadow .25s;
+  outline: none;
+}
+
+.input:focus,
+.input:focus-visible,
+.input:active,
+.select:focus,
+.select:focus-visible,
+.select:active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(78,166,255,0.25);
+  outline: none;
+}
+
+/* Убираем светлый autofill от браузера */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px #0c0f15 inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  caret-color: var(--text);
+  border-color: var(--border) !important;
+}
+
+/* Кнопка сброса у type="search" */
+.input[type="search"]::-webkit-search-cancel-button,
+.input[type="search"]::-webkit-search-decoration,
+.input[type="search"]::-webkit-search-results-button,
+.input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+/* ===================================================================== */
+/*                               КНОПКИ                                   */
+/* ===================================================================== */
+.btn {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .25s;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(78,166,255,0.08);
+}
+
+.btn.small {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* ===================================================================== */
+/*                                ТАБЛИЦЫ                                 */
+/* ===================================================================== */
+.table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--panel);
+  overflow-y: auto;              /* ВАЖНО */
+  max-height: calc(100vh - 260px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: #121722;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 14px;
+}
+
+tbody td {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  font-size: 15px;
+}
+
+tr:hover td {
+  background: #0c0f15;
+}
+
+/* ===================================================================== */
+/*                                 МОДАЛКИ                                */
+/* ===================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;                  /* Модалка скрыта */
+  justify-content: center;
+  align-items: center;
+  /* Вертикальный скролл на маленьких экранах, если модалка не влезает */
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 200;
+}
+
+.modal-overlay.active {
+  display: flex;                 /* Показываем модалку */
+}
+
+/* Тело модалки */
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 32px;
+  width: 460px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: fadeIn .25s;
+}
+
+/* Большая модалка */
+.modal.large {
+  width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ===================================================================== */
+/*                      ИСТОРИЯ СОТРУДНИКОВ — НАСТРОЙКА                   */
+/* ===================================================================== */
+/*                               АДМИН-ФОРМА                              */
+/* ===================================================================== */
+.admin-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-field input {
+  flex: 1;
+  background: #0c0f15;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  color: var(--text);
+}
+
+/* === Модалка «Добавить сотрудника» — единый стиль проекта === */
+#addModal .aemp-modal {
+  width: 440px;
+  max-height: min(88vh, calc(100vh - 40px));
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #1e2535;
+  background: #12171f;
+  box-shadow: 0 32px 72px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.03);
+  animation: taskModalIn .22s cubic-bezier(.16,1,.3,1);
+}
+
+/* Фото-блок */
+.aemp-photo-block { padding-bottom: 8px; }
+
+.aemp-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.aemp-avatar-label {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.aemp-photo-hint {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* Кнопки в модалке "Добавить задание" прижимаем вправо */
+#addTaskModal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+
+
+/* Скролл таблиц */
+.table-wrap {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2f3a transparent;
+}
+
+.table-wrap::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+  background: #2a2f3a;
+  border-radius: 6px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb:hover {
+  background: #3a4152;
+}
+
+.toolbar .btn {
+  white-space: nowrap;
+}
+
+.employee-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.employee-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.employee-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  border-color: rgba(78, 166, 255, 0.35);
+}
+
+.employee-card:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.employee-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.employee-card-person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.employee-card-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  background: #0c0f15;
+  flex-shrink: 0;
+}
+.employee-card-head:has(.employee-card-status.on) .employee-card-avatar {
+  border-color: #4ec88c;
+  box-shadow: 0 0 0 3px rgba(78, 200, 140, 0.18);
+}
+.employee-card-head:has(.employee-card-status.off) .employee-card-avatar {
+  border-color: #ffcf6b;
+  box-shadow: 0 0 0 3px rgba(255, 207, 107, 0.18);
+}
+
+.employee-card-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.employee-card-status {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  border: 1px solid transparent;
+}
+
+.employee-card-status.on {
+  color: #6de0a8;
+  background: rgba(109, 224, 168, 0.12);
+  border-color: rgba(109, 224, 168, 0.35);
+}
+
+.employee-card-status.off {
+  color: #ffcf6b;
+  background: rgba(255, 207, 107, 0.12);
+  border-color: rgba(255, 207, 107, 0.35);
+}
+
+.employee-card-secondary {
+  display: flex;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.employee-card-secondary strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.employee-card-primary {
+  display: flex;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.employee-card-primary strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.employee-card-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.employee-card-actions .btn {
+  flex: 1;
+  min-width: 0;
+}
+
+.employee-cards-empty {
+  grid-column: 1 / -1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: #888;
+  text-align: center;
+  padding: 20px 16px;
+}
+
+@media (max-width: 1400px) {
+  .employee-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .employee-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .employee-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Primary CTA: Добавить сотрудника */
+#addEmployeeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Выравниваем заголовки таблиц влево */
+#employeeTable th,
+#reportTable th {
+  text-align: left;
+}
+
+#employeeTable th:last-child {
+  text-align: left;
+  padding-left: 20px;
+}
+
+
+/* ==========================================================
+   ========== ЗАДАНИЯ — МОДАЛКА СОТРУДНИКА (.task-item) ======
+   ========================================================== */
+
+/* Обёртка модалки сотрудника — полностью переопределяем скролл */
+#tasksModal .modal {
+  padding: 0;
+  overflow: hidden;     /* блокирует overflow-y: auto из .modal.large */
+  height: 90vh;         /* фиксированная высота — обязательна для flex-скролла */
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ti-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.ti-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  flex: 1;
+}
+.ti-day-select {
+  height: 32px;
+  background: #0c0f15;
+  border: 1px solid #1e2535;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 0 10px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  flex-shrink: 0;
+}
+.ti-day-select:focus { border-color: rgba(78,166,255,0.45); }
+.ti-day-select option { background: #0c0f15; }
+.ti-modal-head .task-modal-close { margin-left: 24px; }
+
+/* Список — занимает всё пространство между шапкой и футером, скроллится */
+.tasks-list {
+  flex: 1;
+  min-height: 0;           /* critical: разрешает flex-child скроллиться */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 28px 8px;
+  /* Карточки не сжимаются — контент не обрезается */
+  align-items: stretch;
+}
+
+/* Кастомный скроллбар */
+.tasks-list::-webkit-scrollbar { width: 5px; }
+.tasks-list::-webkit-scrollbar-track { background: transparent; }
+.tasks-list::-webkit-scrollbar-thumb { background: #1e2738; border-radius: 3px; }
+.tasks-list::-webkit-scrollbar-thumb:hover { background: #2a3550; }
+
+/* Фиксированный футер с кнопкой «Закрыть» */
+.ti-modal-foot {
+  flex-shrink: 0;
+  padding: 14px 28px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Пустое состояние */
+.ti-empty {
+  color: #4a5670;
+  font-size: 13px;
+  text-align: center;
+  padding: 24px 0;
+  margin: 0;
+}
+
+/* Карточка задания в модалке — единый стиль с .task-card */
+.task-item {
+  background: var(--panel);
+  border: 1px solid #1a2030;
+  border-radius: 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;           /* карточка не сжимается — весь контент виден */
+  overflow: visible;        /* ничего не обрезается */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.task-item:hover {
+  border-color: #252f42;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.task-item.tc--done    { border-color: rgba(78,200,140,0.18); }
+.task-item.tc--overdue { border-color: rgba(255,93,93,0.22); }
+
+/* Кнопка «Удалить» */
+.tc-btn--del {
+  color: #ff5d5d;
+  border-color: rgba(255,93,93,0.2);
+}
+.tc-btn--del:hover {
+  background: rgba(255,93,93,0.07);
+  border-color: rgba(255,93,93,0.38);
+}
+/* В модалке сотрудника кнопка не растягивается */
+.ti-footer .tc-btn--del {
+  flex: 0 0 auto;
+}
+
+/* ── Модалка подтверждения удаления ────────────────────────────── */
+.confirm-del-modal {
+  width: 400px;
+  text-align: center;
+  padding: 32px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.confirm-del-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255,93,93,0.1);
+  border: 1px solid rgba(255,93,93,0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff5d5d;
+  margin-bottom: 18px;
+  flex-shrink: 0;
+}
+.confirm-del-title {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+.confirm-del-text {
+  margin: 0 0 26px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.confirm-del-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.confirm-del-actions .task-btn-cancel {
+  flex: 1;
+}
+.confirm-del-btn {
+  flex: 1;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255,93,93,0.15);
+  color: #ff5d5d;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s, color 0.15s;
+  outline: 1px solid rgba(255,93,93,0.3);
+}
+.confirm-del-btn:hover {
+  background: rgba(255,93,93,0.25);
+  outline-color: rgba(255,93,93,0.5);
+}
+.confirm-del-btn:active { opacity: 0.8; }
+
+/* Футер в модалке: три кнопки — всегда в одну строку */
+.ti-footer {
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+.ti-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ti-footer-right {
+  display: flex;
+  align-items: center;
+}
+/* Кнопка «Выполнено/Отменить» — тянется, остальные фиксированы */
+.ti-footer-left .tc-btn:first-child {
+  flex: 1 1 auto;
+}
+/* Иконочные кнопки — квадратные и компактные */
+.tc-btn--icon {
+  flex: 0 0 auto !important;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+}
+.tc-btn--muted {
+  color: #3e4d62;
+  border-color: #1e2535;
+}
+.tc-btn--muted:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: #2e3d55;
+  color: var(--muted);
+}
+.tc-btn--muted-del {
+  color: #3e4d62;
+  border-color: #1e2535;
+}
+.tc-btn--muted-del:hover {
+  background: rgba(255,80,80,0.07);
+  border-color: rgba(255,80,80,0.25);
+  color: #ff6b6b;
+}
+/* Кнопка «Комментарии» — не растягивается */
+.ti-footer-right .tc-btn--comments {
+  flex: 0 0 auto;
+}
+
+/* Поле заголовка в модалках добавления / редактирования */
+#taskTitle,
+#editTaskTitle {
+  width: 100%;
+  background: #0c0f15;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 14px;
+  box-sizing: border-box;
+  resize: none;
+  transition: 0.25s;
+}
+#taskTitle:focus,
+#editTaskTitle:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(78,166,255,0.25);
+  outline: none;
+}
+
+/* Заголовок модалки теперь управляется через .ti-modal-head */
+#tasksModalTitle { display: block; }
+
+
+/* === Задания — увеличение ширины поля поиска === */
+#tasks .toolbar .input {
+  flex: 0 0 58% !important;  /* аналогично сотрудникам, можно увеличить до 70%, если хочешь ещё шире */
+  min-width: 320px;
+}
+
+.task-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.task-cards-empty {
+  grid-column: 1 / -1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: #999;
+  text-align: center;
+  padding: 22px 16px;
+}
+
+/* ── Поле времени дедлайна (оба модала) ─────────────────────────── */
+.task-due-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+.task-due-label {
+  font-size: 12px;
+  color: #4a5265;
+  white-space: nowrap;
+}
+.task-time-input {
+  width: 112px !important;
+  min-width: 0 !important;
+  padding: 0 10px !important;
+  color-scheme: dark;
+}
+.task-due-sep {
+  color: #2d3547;
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ── Time Picker (модалки добавления/редактирования) ──────────── */
+.tp-block { margin-top: 10px; }
+.tp-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.tp-label {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tp-no-time-btn {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #4a5670;
+  background: transparent;
+  border: 1px solid #1e2738;
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.tp-no-time-btn:hover { color: var(--muted); border-color: #2a3550; }
+.tp-no-time-btn.active {
+  color: var(--accent);
+  background: rgba(78,166,255,0.08);
+  border-color: rgba(78,166,255,0.3);
+}
+.tp-fields { display: flex; flex-direction: column; gap: 8px; }
+.tp-fields.hidden { display: none; }
+.tp-inputs-row { display: flex; align-items: center; gap: 8px; }
+.tp-input {
+  width: 114px;
+  height: 40px;
+  background: #131820;
+  border: 1px solid #1e2738;
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  padding: 0 10px;
+  outline: none;
+  transition: border-color 0.15s;
+  color-scheme: dark;
+}
+.tp-input:focus { border-color: var(--accent); }
+.tp-sep { color: #2d3a50; font-size: 15px; flex-shrink: 0; user-select: none; }
+.tp-duration { font-size: 12.5px; font-weight: 600; color: #4ec88c; margin-left: 4px; min-width: 52px; }
+.tp-presets { display: flex; gap: 6px; }
+.tp-preset {
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 6px;
+  border: 1px solid #1e2738;
+  background: rgba(255,255,255,0.02);
+  color: #5a6880;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.tp-preset:hover { color: var(--accent); border-color: rgba(78,166,255,0.3); background: rgba(78,166,255,0.06); }
+.tp-error { font-size: 11.5px; color: var(--danger); line-height: 1.4; }
+.tp-error:empty { display: none; }
+
+/* ── Карточка задания — полный редизайн ─────────────────────────── */
+.task-card {
+  background: var(--panel);
+  border: 1px solid #1a2030;
+  border-radius: 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  min-height: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.task-card:hover {
+  border-color: #252f42;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.task-card.tc--done   { border-color: rgba(78,200,140,0.18); }
+.task-card.tc--overdue { border-color: rgba(255,93,93,0.22); }
+
+/* legacy — kept for compat */
+.task-card.done { border-color: rgba(86,197,143,0.3); }
+
+.task-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.task-card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.task-card-status {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  border: 1px solid transparent;
+}
+
+.task-card-status.in-progress {
+  color: #ffcf6b;
+  background: rgba(255, 207, 107, 0.12);
+  border-color: rgba(255, 207, 107, 0.35);
+}
+
+.task-card-status.done {
+  color: #6de0a8;
+  background: rgba(109, 224, 168, 0.12);
+  border-color: rgba(109, 224, 168, 0.35);
+}
+
+.task-card-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.task-card-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.task-card-actions .btn {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 1400px) {
+  .task-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .task-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .task-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* ====================== DROPDOWN CALENDAR ====================== */
+.calendar-dropdown {
+  position: relative;
+}
+
+.calendar-toggle {
+  height: 38px;
+  padding: 0 14px;
+  background: #0c0f15;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calendar-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.calendar-menu {
+  display: none;
+  position: absolute;
+  top: 44px;
+  left: 0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  min-width: 120px;
+  z-index: 100;
+}
+
+.calendar-menu .day {
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text);
+  transition: 0.2s;
+}
+
+.calendar-menu .day:hover {
+  background: rgba(78,166,255,0.1);
+  color: var(--accent);
+}
+
+/* Активное состояние */
+.calendar-dropdown.open .calendar-menu {
+  display: block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ====================== PROFESSIONAL WEEK CALENDAR ====================== */
+
+
+
+
+
+.week-calendar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px; /* 💥 Увеличили расстояние между днями */
+  height: 36px;
+  user-select: none;
+  background: transparent;
+}
+
+
+.week-calendar .day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.week-calendar .day .label {
+  font-size: 11px;
+  line-height: 1;
+  color: var(--muted);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.week-calendar .day .num {
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* hover */
+.week-calendar .day:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.week-calendar .day:hover .label,
+.week-calendar .day:hover .num {
+  color: var(--accent);
+}
+
+/* сегодня */
+.week-calendar .day.today {
+  background: rgba(78,166,255,0.1);
+}
+
+.week-calendar .day.today .label,
+.week-calendar .day.today .num {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+
+/* ====================== MODERN DARK CALENDAR HIGHLIGHT ====================== */
+
+/* Сегодняшний день — тонкая синяя рамка */
+.calendar-menu .day.today {
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--accent);
+  font-weight: 600;
+  background: rgba(78,166,255,0.1);
+}
+
+/* Выбранный день — плотный синий фон */
+.calendar-menu .day.selected {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 0;     /* ← прямоугольник */
+  font-weight: 600;
+}
+
+
+/* Если выбранный день совпадает с сегодняшним */
+.calendar-menu .day.today.selected {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+}
+
+/* Hover в выбранном дне */
+.calendar-menu .day.selected:hover {
+  background: #6eb7ff;
+  color: #fff;
+}
+
+/* Hover в сегодняшнем дне */
+.calendar-menu .day.today:hover {
+  background: rgba(78,166,255,0.2);
+}
+
+  .calendar-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .calendar-toggle {
+    background: #1a1f29;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .calendar-menu {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background: #1a1f29;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 8px;
+    border-radius: 6px;
+    z-index: 1000;
+    display: none; /* по умолчанию скрыто */
+  }
+
+  /* 👇 показываем меню, когда добавляется класс .open */
+  .calendar-dropdown.open .calendar-menu {
+    display: block;
+  }
+
+
+  /* ===================================================== */
+/*           Состояние отключённой кнопки (disabled)      */
+/* ===================================================== */
+button.disabled,
+button:disabled,
+.btn.disabled,
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(0.4);
+  border-color: #2a2f3a;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+}
+
+button.disabled:hover,
+button:disabled:hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+}
+
+
+/* ================================
+   ЕДИНАЯ ДЛИНА ПОИСКА
+   ================================ */
+
+#empSearch,
+#taskSearch {
+  width: 260px;
+  max-width: 400px;
+  min-width: 400px;
+}
+
+.sel-wrap {
+  position: relative;
+  width: 400px;
+  min-width: 400px;
+  flex-shrink: 0;
+}
+.sel-wrap::after {
+  content: "▼";
+  font-size: 9px;
+  color: var(--muted);
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.sel-wrap select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  min-width: 0;
+  padding-right: 28px;
+}
+
+
+#salEmpSelect {
+  width: 100%;
+  min-width: 0;
+}
+
+
+/* ===============================
+   КАСТОМНЫЙ СКРОЛЛ (АДМИН-ПАНЕЛЬ)
+   =============================== */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2f3a #0e1117;
+}
+
+/* =====================================================================
+   МОДАЛКА ПРОФИЛЯ СОТРУДНИКА
+   ===================================================================== */
+
+.emp-profile-modal {
+  width: 400px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* Шапка */
+.epm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.epm-header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.emp-profile-close {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.emp-profile-close:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+.epm-header-actions .emp-profile-close { margin-left: 24px; }
+
+/* Аватар + имя */
+.epm-top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 20px 0;
+}
+
+.epm-avatar-label {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  overflow: hidden;
+  border: 2px solid rgba(78,166,255,0.3);
+  box-shadow: 0 0 0 4px rgba(78,166,255,0.07);
+  display: block;
+}
+.epm-avatar-label:hover .epm-avatar-overlay { opacity: 1; }
+
+.emp-profile-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+#empProfileModal:has(.emp-profile-status.on) .epm-avatar-wrap {
+  border-color: #4ec88c;
+  box-shadow: 0 0 0 4px rgba(78, 200, 140, 0.18);
+}
+#empProfileModal:has(.emp-profile-status.off) .epm-avatar-wrap {
+  border-color: #ffcf6b;
+  box-shadow: 0 0 0 4px rgba(255, 207, 107, 0.18);
+}
+
+.epm-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.18s;
+  color: #fff;
+}
+
+.epm-top-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  width: 100%;
+}
+
+.epm-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.emp-profile-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emp-profile-status {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  align-self: flex-start;
+}
+.emp-profile-status.on  { color: #6de0a8; background: rgba(109,224,168,0.12); border: 1px solid rgba(109,224,168,0.35); }
+.emp-profile-status.off { color: #ffcf6b; background: rgba(255,207,107,0.12); border: 1px solid rgba(255,207,107,0.35); }
+
+.emp-profile-shift {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Статистика */
+.emp-profile-stats {
+  display: flex;
+  align-items: stretch;
+  margin: 18px 20px 0;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.emp-profile-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 14px 10px;
+}
+
+.emp-profile-stat-divider {
+  width: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.eps-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.eps-value.eps-done { color: #6de0a8; }
+
+.eps-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+/* Блок времени смены */
+.epm-shift-times {
+  margin: 14px 20px 0;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.epm-shift-time-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 16px;
+}
+
+.epm-shift-time-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+.epm-st-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.epm-st-label svg { flex-shrink: 0; }
+
+.epm-st-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.epm-st-value.epm-st-active {
+  color: #6de0a8;
+}
+.epm-st-value.epm-st-muted {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Кнопки в шапке профиля */
+.epm-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.epm-edit-btn,
+.epm-del-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #1e2535;
+  background: transparent;
+  color: #3e4d62;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+  flex-shrink: 0;
+}
+.epm-edit-btn:hover {
+  background: rgba(255,255,255,.05);
+  border-color: #2e3d55;
+  color: var(--muted);
+}
+.epm-del-btn:hover {
+  background: rgba(255,80,80,.07);
+  border-color: rgba(255,80,80,.25);
+  color: #ff6b6b;
+}
+
+/* Аватар в просмотре (без кликабельности) */
+.epm-avatar-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid rgba(78,166,255,0.3);
+  box-shadow: 0 0 0 4px rgba(78,166,255,0.07);
+}
+
+/* Кнопки действий */
+.epm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px 20px;
+}
+
+.epm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background .18s, opacity .18s;
+}
+.epm-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.epm-btn-save {
+  background: var(--accent);
+  color: #fff;
+}
+.epm-btn-save:hover:not(:disabled) { background: #6eb7ff; }
+
+/* Кнопка смены: стиль "начать" */
+.epm-btn-shift.epm-shift-start {
+  background: rgba(109,224,168,0.1);
+  color: #6de0a8;
+  border: 1px solid rgba(109,224,168,0.28);
+}
+.epm-btn-shift.epm-shift-start:hover:not(:disabled) {
+  background: rgba(109,224,168,0.18);
+  border-color: rgba(109,224,168,0.45);
+}
+
+/* Кнопка смены: стиль "завершить" */
+.epm-btn-shift.epm-shift-stop {
+  background: rgba(255,93,93,0.1);
+  color: var(--danger);
+  border: 1px solid rgba(255,93,93,0.28);
+}
+.epm-btn-shift.epm-shift-stop:hover:not(:disabled) {
+  background: rgba(255,93,93,0.18);
+  border-color: rgba(255,93,93,0.45);
+}
+
+/* Кнопка «Задания» — нейтральная вторичная */
+.epm-btn-tasks {
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.epm-btn-tasks:hover:not(:disabled) {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* =====================================================================
+   МОДАЛКА РЕДАКТИРОВАНИЯ СОТРУДНИКА (#empEditModal)
+   ===================================================================== */
+
+.emp-edit-modal {
+  width: 400px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.eem-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.eem-header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Фото-секция */
+.eem-photo-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 20px 0;
+}
+
+.eem-avatar-label {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  overflow: hidden;
+  border: 2px solid rgba(78,166,255,0.3);
+  box-shadow: 0 0 0 4px rgba(78,166,255,0.07);
+  display: block;
+}
+.eem-avatar-label:hover .eem-avatar-overlay { opacity: 1; }
+
+.eem-avatar-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.eem-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.18s;
+  color: #fff;
+}
+
+.eem-photo-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Поля */
+.eem-field {
+  padding: 16px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.eem-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.eem-label-hint {
+  font-size: 10px;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: .7;
+}
+
+.eem-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.eem-input-wrap .eem-input {
+  padding-right: 38px;
+}
+
+.eem-eye-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  transition: color .15s;
+}
+.eem-eye-btn:hover { color: var(--text); }
+
+.eem-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0c0f15;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  padding: 9px 13px;
+  outline: none;
+  transition: border-color .2s;
+}
+.eem-input:focus { border-color: var(--accent); }
+
+.eem-error {
+  font-size: 12px;
+  color: var(--danger);
+  min-height: 16px;
+  padding: 6px 20px 0;
+}
+
+/* Кнопки */
+.eem-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 20px 20px 22px;
+}
+
+.eem-btn-cancel {
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: background .18s, color .18s;
+}
+.eem-btn-cancel:hover { background: rgba(255,255,255,.09); color: var(--text); }
+
+.eem-btn-save {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: background .18s, opacity .18s;
+}
+.eem-btn-save:hover:not(:disabled) { background: #6eb7ff; }
+.eem-btn-save:disabled { opacity: .45; cursor: not-allowed; }
+
+/* =====================================================================
+   РАЗДЕЛ «АДМИНИСТРАТОР»
+   ===================================================================== */
+
+#admin {
+  padding: 32px 32px 0;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.adm-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 560px;
+}
+
+/* --- Карточка --- */
+.adm-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 26px;
+}
+
+.adm-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 20px;
+}
+
+/* --- Строка поля --- */
+.adm-field {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 0;
+}
+
+.adm-field-label {
+  font-size: 13px;
+  color: var(--muted);
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.adm-field-val {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  font-family: "JetBrains Mono", "Fira Mono", monospace;
+  letter-spacing: .03em;
+}
+
+.adm-pwd-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.adm-field-pwd {
+  flex: 1;
+}
+
+.adm-pwd-toggle {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  transition: color .2s;
+}
+.adm-pwd-toggle:hover { color: var(--accent); }
+
+.adm-field-btn {
+  background: rgba(78,166,255,.08);
+  border: 1px solid rgba(78,166,255,.18);
+  color: var(--accent);
+  border-radius: 7px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+  white-space: nowrap;
+}
+.adm-field-btn:hover {
+  background: rgba(78,166,255,.16);
+  border-color: rgba(78,166,255,.35);
+}
+
+.adm-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+/* --- Онлайн-карточка --- */
+.adm-card-online {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 26px;
+}
+
+.adm-online-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4cde80;
+  box-shadow: 0 0 0 3px rgba(76,222,128,.18);
+  flex-shrink: 0;
+  animation: adm-pulse 2s ease-in-out infinite;
+}
+
+@keyframes adm-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(76,222,128,.18); }
+  50%       { box-shadow: 0 0 0 6px rgba(76,222,128,.05); }
+}
+
+.adm-online-count {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.adm-online-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* --- Модалка редактирования --- */
+.adm-edit-modal {
+  width: 400px;
+  padding: 28px 28px 24px;
+}
+
+.adm-edit-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+.adm-edit-head svg { color: var(--accent); flex-shrink: 0; }
+
+.adm-edit-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+}
+
+.adm-edit-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0c0f15;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color .2s;
+}
+.adm-edit-input:focus { border-color: var(--accent); }
+
+.adm-edit-error {
+  font-size: 12px;
+  color: var(--danger);
+  min-height: 18px;
+  margin-top: 6px;
+}
+
+.adm-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.adm-edit-save {
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.adm-edit-save:hover { background: #6eb7ff; }
+
+/* Chrome / Edge / Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0e1117;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #2a2f3a;
+  border-radius: 6px;
+  border: 2px solid #0e1117;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #3a4152;
+}
+
+/* ======================
+   REPORT
+   ====================== */
+#report .report-toolbar {
+  flex-wrap: wrap;
+}
+
+#report #reportEmployee {
+  width: 100%;
+  min-width: 0;
+}
+
+#report #reportFrom,
+#report #reportTo {
+  width: 160px;
+  min-width: 160px;
+}
+
+#report #reportFromToggle,
+#report #reportToToggle {
+  min-width: 160px;
+  text-align: center;
+}
+
+#report .report-summary {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+#report .report-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  min-width: 180px;
+}
+
+#report .report-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+#report .report-value {
+  margin-top: 4px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+#reportTable td:last-child {
+  text-align: right;
+  padding-right: 40px;
+}
+
+
+/* =====================================================================
+   TASK MODAL REDESIGN — «Добавить задание»
+   ===================================================================== */
+
+/* Переопределяем .modal.large для таск-модалок add / edit */
+#addTaskModal .task-modal,
+#editTaskModal .task-modal {
+  width: 580px;
+  /* оставляем отступы сверху/снизу от края экрана */
+  max-height: min(88vh, calc(100vh - 40px));
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #1e2535;
+  background: #12171f;
+  box-shadow: 0 32px 72px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+  animation: taskModalIn .22s cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes taskModalIn {
+  from { opacity: 0; transform: scale(.97) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Шапка ─────────────────────────────────────────────────────────── */
+.task-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #1a2030;
+  flex-shrink: 0;
+}
+
+.task-modal-header-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(78,166,255,0.1);
+  border: 1px solid rgba(78,166,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.task-modal-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+  letter-spacing: .01em;
+}
+
+.task-modal-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #4a5265;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+  flex-shrink: 0;
+}
+
+.task-modal-close:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: #1e2535;
+  color: var(--text);
+}
+
+.task-modal-close:active {
+  background: rgba(255,255,255,0.1);
+}
+
+/* ── Тело (скролл) ──────────────────────────────────────────────────── */
+.task-modal-body {
+  flex: 1;
+  /* min-height: 0 обязателен — без него flex-child не уменьшается ниже
+     своего content-size и overflow-y не работает */
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Не даём скроллу «проваливаться» на страницу за модалкой */
+  overscroll-behavior: contain;
+  padding: 4px 0;
+}
+
+/* Скроллбар внутри body таск-модалок */
+.task-modal-body::-webkit-scrollbar { width: 5px; }
+.task-modal-body::-webkit-scrollbar-track { background: transparent; }
+.task-modal-body::-webkit-scrollbar-thumb { background: #1e2738; border-radius: 3px; }
+.task-modal-body::-webkit-scrollbar-thumb:hover { background: #2a3550; }
+
+/* ── Блок-секция ────────────────────────────────────────────────────── */
+.task-block {
+  padding: 16px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-block-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: #4a5265;
+}
+
+.task-block-label svg {
+  flex-shrink: 0;
+  opacity: .75;
+}
+
+/* Разделитель между секциями */
+.task-modal-divider {
+  height: 1px;
+  background: #1a2030;
+  margin: 0 22px;
+}
+
+/* ── Строка с датой ─────────────────────────────────────────────────── */
+.task-date-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-month-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 13px;
+  background: rgba(78,166,255,0.07);
+  border: 1px solid rgba(78,166,255,0.16);
+  border-radius: 7px;
+  color: #7ec4ff;
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 130px;
+  line-height: 1;
+}
+
+.task-select {
+  height: 38px;
+  padding: 0 28px 0 10px;
+  background: #0c0f15;
+  color: var(--text);
+  border: 1px solid #1e2535;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border .2s, box-shadow .2s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%234a5265' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+}
+
+.task-select:hover {
+  border-color: #2d3547;
+}
+
+.task-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(78,166,255,0.13);
+  outline: none;
+}
+
+/* ── Инпут заголовка ────────────────────────────────────────────────── */
+.task-input {
+  width: 100%;
+  height: 44px;
+  background: #0c0f15;
+  border: 1px solid #1e2535;
+  border-radius: 8px;
+  padding: 0 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border .2s, box-shadow .2s;
+}
+
+.task-input::placeholder { color: #333d50; }
+
+.task-input:hover  { border-color: #27303f; }
+
+.task-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(78,166,255,0.13);
+  outline: none;
+}
+
+/* ── Textarea описания ──────────────────────────────────────────────── */
+.task-textarea {
+  width: 100%;
+  min-height: 96px;
+  background: #0c0f15;
+  border: 1px solid #1e2535;
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.55;
+  box-sizing: border-box;
+  resize: vertical;
+  transition: border .2s, box-shadow .2s;
+}
+
+.task-textarea::placeholder { color: #333d50; }
+
+.task-textarea:hover  { border-color: #27303f; }
+
+.task-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(78,166,255,0.13);
+  outline: none;
+}
+
+/* ── Поиск по сотрудникам ───────────────────────────────────────────── */
+.task-emp-search-wrap {
+  position: relative;
+}
+
+.task-emp-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #333d50;
+  pointer-events: none;
+}
+
+.task-emp-search {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 38px;
+  background: #0c0f15;
+  border: 1px solid #1e2535;
+  border-radius: 8px;
+  padding: 0 14px 0 34px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
+  transition: border .2s, box-shadow .2s;
+}
+
+.task-emp-search::placeholder { color: #333d50; }
+
+.task-emp-search:hover { border-color: #27303f; }
+
+.task-emp-search:focus,
+.task-emp-search:focus-visible,
+.task-emp-search:active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(78,166,255,0.13);
+  outline: none;
+}
+
+.task-emp-search:-webkit-autofill,
+.task-emp-search:-webkit-autofill:hover,
+.task-emp-search:-webkit-autofill:focus,
+.task-emp-search:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px #0c0f15 inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  caret-color: var(--text);
+  border-color: #1e2535 !important;
+}
+
+/* Убираем системную иконку поиска в Chrome/Safari */
+.task-emp-search::-webkit-search-cancel-button,
+.task-emp-search::-webkit-search-decoration,
+.task-emp-search::-webkit-search-results-button,
+.task-emp-search::-webkit-search-results-decoration { display: none; }
+
+/* ── Сетка чекбоксов ────────────────────────────────────────────────── */
+.task-checkbox-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  /* Адаптивная высота: минимум 6 строк (~37px каждая),
+     но не более 30% высоты экрана — на маленьких мониторах не давит */
+  max-height: clamp(222px, 30vh, 320px);
+  overflow-y: auto;
+  /* Скролл остаётся внутри списка; когда список кончается —
+     скролл переходит к modal body, а не к странице */
+  overscroll-behavior: contain;
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+  padding: 4px;
+  background: #0b0e15;
+}
+
+.task-checkbox-grid::-webkit-scrollbar { width: 4px; }
+.task-checkbox-grid::-webkit-scrollbar-track { background: transparent; }
+.task-checkbox-grid::-webkit-scrollbar-thumb { background: #1e2738; border-radius: 3px; }
+.task-checkbox-grid::-webkit-scrollbar-thumb:hover { background: #2a3550; }
+
+.task-checkbox-grid .checkbox-item {
+  display: flex !important;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s;
+  user-select: none;
+  margin: 0 !important;
+}
+
+.task-checkbox-grid .checkbox-item:hover {
+  background: rgba(78,166,255,0.06);
+}
+
+/* Кастомный чекбокс */
+.task-checkbox-grid .checkbox-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid #2a3244;
+  border-radius: 5px;
+  background: #111620;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background .15s, border-color .15s;
+}
+
+.task-checkbox-grid .checkbox-item input[type="checkbox"]:hover {
+  border-color: rgba(78,166,255,0.5);
+}
+
+.task-checkbox-grid .checkbox-item input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.task-checkbox-grid .checkbox-item input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1.5px;
+  width: 5px;
+  height: 8px;
+  border: 1.8px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.task-checkbox-grid .checkbox-item span {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1;
+}
+
+/* Скрытый при поиске элемент */
+.task-checkbox-grid .checkbox-item.hidden {
+  display: none !important;
+}
+
+/* ── Строка выбора сотрудника (checkbox + radio-главный) ─────────── */
+.emp-select-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  transition: background 0.12s;
+}
+.emp-select-row:hover { background: rgba(78,166,255,0.04); }
+.emp-select-row--main { background: rgba(78,166,255,0.06); }
+
+.emp-select-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Кастомный checkbox — наследует стили .task-checkbox-grid */
+.emp-select-check input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid #2a3244;
+  border-radius: 5px;
+  background: #111620;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+}
+.emp-select-check input[type="checkbox"]:hover { border-color: rgba(78,166,255,0.5); }
+.emp-select-check input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+.emp-select-check input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px; top: 1.5px;
+  width: 5px; height: 8px;
+  border: 1.8px solid #fff;
+  border-top: none; border-left: none;
+  transform: rotate(45deg);
+}
+
+.emp-select-name {
+  font-size: 13.5px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Лейбл «Главный» (radio) */
+.emp-select-main-lbl {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.emp-select-main-lbl input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.emp-main-pill {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border: 1px solid #1e2535;
+  color: #3d4a60;
+  background: transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.emp-select-main-lbl:hover .emp-main-pill {
+  border-color: rgba(78,166,255,0.4);
+  color: var(--accent);
+  background: rgba(78,166,255,0.06);
+}
+.emp-select-row--main .emp-main-pill,
+.emp-select-main-lbl input[type="radio"]:checked + .emp-main-pill {
+  border-color: rgba(78,166,255,0.5);
+  color: var(--accent);
+  background: rgba(78,166,255,0.1);
+}
+
+/* Пустое состояние поиска */
+.task-emp-empty {
+  padding: 18px 12px;
+  text-align: center;
+  color: #333d50;
+  font-size: 13px;
+}
+
+/* ── Подвал с кнопками ──────────────────────────────────────────────── */
+.task-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 22px;
+  border-top: 1px solid #1a2030;
+  flex-shrink: 0;
+}
+
+/* Кнопка «Отмена» — вторичная */
+.task-btn-cancel {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: 1px solid #1e2535;
+  background: transparent;
+  color: #5a6378;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+
+.task-btn-cancel:hover {
+  border-color: #2d3547;
+  color: var(--text);
+  background: rgba(255,255,255,0.03);
+}
+
+.task-btn-cancel:active {
+  background: rgba(255,255,255,0.06);
+}
+
+/* Кнопка «Сохранить» — первичная */
+.task-btn-save {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(78,166,255,0.4);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background .15s, border-color .15s, box-shadow .15s;
+}
+
+.task-btn-save:hover {
+  background: #6ab8ff;
+  border-color: #6ab8ff;
+  box-shadow: 0 4px 14px rgba(78,166,255,0.28);
+}
+
+.task-btn-save:active {
+  background: #3d95f5;
+  box-shadow: none;
+}
+
+.task-btn-save:focus-visible,
+.task-btn-cancel:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(78,166,255,0.3);
+}
+
+/* =====================================================================
+   WIZARD — step indicator + panels + navigation
+   ===================================================================== */
+
+/* Step indicator bar */
+.wizard-steps {
+  display: flex;
+  align-items: center;
+  padding: 12px 22px;
+  border-bottom: 1px solid #1a2030;
+  flex-shrink: 0;
+  gap: 0;
+}
+
+.wz-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.wz-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #2a3550;
+  background: transparent;
+  color: #4a5265;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .2s, background .2s, color .2s;
+}
+
+.wz-step.active .wz-dot {
+  border-color: var(--accent);
+  background: rgba(78,166,255,0.15);
+  color: var(--accent);
+}
+
+.wz-step.done .wz-dot {
+  border-color: rgba(78,166,255,0.35);
+  background: rgba(78,166,255,0.08);
+  color: var(--accent);
+}
+
+.wz-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a5265;
+  transition: color .2s;
+}
+
+.wz-step.active .wz-label {
+  color: var(--text);
+}
+
+.wz-step.done .wz-label {
+  color: var(--accent);
+  opacity: 0.75;
+}
+
+.wz-connector {
+  flex: 1;
+  height: 1px;
+  background: #1e2535;
+  margin: 0 10px;
+}
+
+/* Wizard panels */
+.wizard-panel {
+  display: none;
+}
+
+.wizard-panel.active {
+  display: block;
+}
+
+/* Subtitle in main-employee wizard step */
+.wz-main-subtitle {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Wizard navigation in footer */
+.wz-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-btn-back {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  border: 1px solid #1e2535;
+  background: transparent;
+  color: #5a6378;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+
+.task-btn-back:hover {
+  border-color: #2d3547;
+  color: var(--text);
+  background: rgba(255,255,255,0.03);
+}
+
+.task-btn-back:active {
+  background: rgba(255,255,255,0.06);
+}
+
+.task-btn-next {
+  height: 40px;
+  padding: 0 22px;
+  border-radius: 8px;
+  border: 1px solid rgba(78,166,255,0.4);
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background .15s, border-color .15s, box-shadow .15s;
+}
+
+.task-btn-next:hover {
+  background: #6ab8ff;
+  border-color: #6ab8ff;
+  box-shadow: 0 4px 14px rgba(78,166,255,0.28);
+}
+
+.task-btn-next:active {
+  background: #3d95f5;
+  box-shadow: none;
+}
+
+.task-btn-next:focus-visible,
+.task-btn-back:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(78,166,255,0.3);
+}
+
+/* Hide utility for wizard navigation buttons */
+.wz-hidden {
+  display: none !important;
+}
+
+/* =====================================================================
+   INLINE ERRORS — поля с ошибкой
+   ===================================================================== */
+
+.task-field-error {
+  font-size: 12px;
+  color: #ff5d5d;
+  line-height: 1.4;
+  min-height: 0;
+  display: none;
+}
+
+.task-field-error.visible {
+  display: block;
+}
+
+.task-input.field-error,
+.task-textarea.field-error,
+.eem-input.field-error {
+  border-color: #ff5d5d !important;
+  box-shadow: 0 0 0 3px rgba(255,93,93,0.1) !important;
+}
+
+.task-checkbox-grid.field-error {
+  border-color: rgba(255,93,93,0.5) !important;
+}
+
+/* =====================================================================
+   SELECT MAIN MODAL — «Главный сотрудник»
+   ===================================================================== */
+
+.select-main-modal {
+  width: 440px;
+  padding: 0;
+  gap: 0;
+  border-radius: 14px;
+  border: 1px solid #1e2535;
+  background: #12171f;
+  box-shadow: 0 32px 72px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+  animation: taskModalIn .22s cubic-bezier(.16,1,.3,1);
+}
+
+.select-main-body {
+  padding: 16px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.select-main-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #4a5265;
+  line-height: 1.5;
+}
+
+/* ── Список радио-кнопок ─────────────────────────────────────────────── */
+.select-main-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+  padding: 4px;
+  background: #0b0e15;
+}
+
+.select-main-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+.select-main-item:hover {
+  background: rgba(78,166,255,0.06);
+}
+
+/* Выбранный вариант */
+.select-main-item:has(input:checked) {
+  background: rgba(78,166,255,0.09);
+  border-color: rgba(78,166,255,0.22);
+}
+
+.select-main-item:has(input:checked) .select-main-name {
+  color: #7ec4ff;
+  font-weight: 500;
+}
+
+/* Кастомная радио-кнопка */
+.select-main-item input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid #2a3244;
+  border-radius: 50%;
+  background: #111620;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color .15s;
+}
+
+.select-main-item input[type="radio"]:hover {
+  border-color: rgba(78,166,255,0.5);
+}
+
+.select-main-item input[type="radio"]:checked {
+  border-color: var(--accent);
+  background: #111620;
+}
+
+.select-main-item input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: calc(50% - 4px);
+  left: calc(50% - 4px);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.select-main-name {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1;
+  transition: color .12s;
+}
+
+/* Inline-ошибка внутри select-main */
+.select-main-error {
+  font-size: 12px;
+  color: #ff5d5d;
+  line-height: 1.4;
+  display: none;
+}
+
+.select-main-error.visible {
+  display: block;
+}
+
+/* Граница списка при ошибке */
+.select-main-list.field-error {
+  border-color: rgba(255,93,93,0.5) !important;
+}
+
+/* =====================================================================
+   TASK CARD — внутренние элементы (.tc-*)
+   ===================================================================== */
+
+/* ── Шапка: статус + время ── */
+.tc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 0;
+  gap: 8px;
+}
+
+/* Статусный бейдж */
+.tc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tc-badge--new {
+  background: rgba(100,120,160,0.1);
+  border: 1px solid rgba(100,120,160,0.25);
+  color: #7a90b4;
+}
+.tc-badge--in_progress {
+  background: rgba(255,185,60,0.09);
+  border: 1px solid rgba(255,185,60,0.28);
+  color: #ffb83c;
+}
+.tc-badge--done {
+  background: rgba(78,200,140,0.09);
+  border: 1px solid rgba(78,200,140,0.28);
+  color: #4ec88c;
+}
+.tc-badge--overdue {
+  background: rgba(255,93,93,0.09);
+  border: 1px solid rgba(255,93,93,0.28);
+  color: #ff5d5d;
+}
+
+/* Время работы задания */
+.tc-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #5a6880;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tc-time svg { flex-shrink: 0; opacity: 0.7; }
+.task-card.tc--overdue .tc-time { color: rgba(255,93,93,0.7); }
+
+/* ── Тело: заголовок + описание ── */
+.tc-body {
+  padding: 10px 14px 0;
+}
+
+.tc-title {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.tc-desc {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: #5a6880;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tc-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+}
+.tc-dates-item {
+  font-size: 11px;
+  color: #3e4d62;
+}
+/* ── Блок сотрудников ── */
+.tc-employees {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 10px 14px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+  min-width: 0;
+}
+/* Растягивает блок сотрудников только в сетке карточек */
+.task-card .tc-employees {
+  flex: 1;
+}
+
+/* Главный сотрудник */
+.tc-emp-main {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.tc-emp-main-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+.tc-emp-main-badge {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  background: rgba(78,166,255,0.13);
+  border: 1px solid rgba(78,166,255,0.28);
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+/* Остальные сотрудники */
+.tc-emp-other {
+  font-size: 12px;
+  color: #4a5670;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 1px;
+}
+
+/* Разделитель после главного перед первым "другим" */
+.tc-emp-main ~ .tc-emp-other:first-of-type {
+  margin-top: 3px;
+  padding-top: 6px;
+  border-top: 1px solid #1a2030;
+}
+
+/* Нет сотрудников */
+.tc-emp-none {
+  font-size: 12px;
+  color: #3a4358;
+  font-style: italic;
+}
+
+/* ── Подвал карточки ── */
+.tc-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 14px 12px;
+  margin-top: auto;
+  border-top: 1px solid #161d28;
+}
+
+/* Кнопки действий */
+.tc-btn {
+  flex: 1 1 calc(50% - 3px);
+  min-width: 0;
+  height: 32px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.tc-btn--done {
+  color: #4ec88c;
+  border-color: rgba(78,200,140,0.22);
+}
+.tc-btn--done:hover {
+  background: rgba(78,200,140,0.07);
+  border-color: rgba(78,200,140,0.4);
+}
+.tc-btn--undo {
+  color: #4a5265;
+  border-color: #1a2030;
+}
+.tc-btn--undo:hover {
+  background: rgba(255,255,255,0.03);
+  color: var(--muted);
+  border-color: #252f42;
+}
+.tc-btn--edit {
+  color: var(--accent);
+  border-color: rgba(78,166,255,0.2);
+}
+.tc-btn--edit:hover {
+  background: rgba(78,166,255,0.07);
+  border-color: rgba(78,166,255,0.35);
+}
+.tc-btn:active { opacity: 0.75; }
+
+/* =====================================================================
+   NOTIFICATIONS SECTION
+   ===================================================================== */
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notif-item {
+  background: var(--panel);
+  border: 1px solid #1a2030;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: border-color 0.15s;
+}
+
+.notif-item.unread {
+  border-color: rgba(78,166,255,0.2);
+  background: rgba(78,166,255,0.03);
+}
+
+.notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.notif-item.read .notif-dot {
+  background: #2a3244;
+}
+
+.notif-body { flex: 1; min-width: 0; }
+
+.notif-msg {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.notif-item.read .notif-msg { color: var(--muted); }
+
+.notif-meta {
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: #3d4a60;
+  display: flex;
+  gap: 10px;
+}
+
+.notif-emp { color: #4a5265; font-weight: 500; }
+
+.notif-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+.notif-btn {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid #1a2030;
+  background: transparent;
+  color: #4a5265;
+  font-size: 11.5px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.notif-btn:hover {
+  border-color: #252f42;
+  color: var(--text);
+  background: rgba(255,255,255,0.03);
+}
+
+.notif-btn.read-btn:hover { color: var(--accent); border-color: rgba(78,166,255,0.3); }
+.notif-btn.del-btn:hover  { color: #ff5d5d; border-color: rgba(255,93,93,0.3); }
+
+.notif-empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: #3d4a60;
+  font-size: 13.5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Название задания в уведомлении */
+.notif-task-title {
+  font-weight: 600;
+  color: var(--text);
+  margin-right: 8px;
+}
+
+/* Бейдж «Просрочено» */
+.notif-badge-overdue {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  background: rgba(255,93,93,0.09);
+  border: 1px solid rgba(255,93,93,0.28);
+  color: #ff5d5d;
+  vertical-align: middle;
+}
+
+.notif-sep { color: #2d3a50; margin: 0 3px; }
+
+/* Кнопка «Очистить всё» */
+.btn-danger-muted {
+  color: #ff5d5d;
+  border-color: rgba(255,93,93,0.2);
+  background: transparent;
+}
+.btn-danger-muted:hover {
+  background: rgba(255,93,93,0.07);
+  border-color: rgba(255,93,93,0.35);
+}
+
+/* Тулбар уведомлений */
+.notif-toolbar {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* =====================================================================
+   ФОТО ЗАДАНИЙ
+   ===================================================================== */
+
+/* ── Блок загрузки фото в add/edit модалках ─────────────────────── */
+.task-photo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.task-photo-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(78,166,255,.07);
+  border: 1px dashed rgba(78,166,255,.35);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background .18s, border-color .18s;
+  white-space: nowrap;
+  user-select: none;
+}
+.task-photo-add-btn:hover {
+  background: rgba(78,166,255,.14);
+  border-color: rgba(78,166,255,.6);
+}
+
+.task-photo-hint {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.task-photo-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.task-photo-previews:empty { margin-top: 0; }
+
+.task-photo-thumb {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: border-color .18s;
+}
+.task-photo-thumb:hover { border-color: var(--accent); }
+
+.task-photo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.task-photo-thumb-del {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.65);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+  z-index: 1;
+}
+.task-photo-thumb-del:hover { background: var(--danger); }
+
+/* ── Рейтинг задания ── */
+.tc-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px 10px;
+  border-top: 1px solid #1a2030;
+}
+.tc-rating-lbl {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.tc-stars {
+  display: flex;
+  gap: 1px;
+}
+.tc-star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  padding: 0 1px;
+  color: #2a3550;
+  transition: color 0.1s, transform 0.1s;
+}
+.tc-star--on  { color: #ffb83c; }
+.tc-star--hover { color: #ffd070; transform: scale(1.15); }
+.tc-rating-val {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffb83c;
+  margin-left: 2px;
+}
+.tc-rating-hint {
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: 2px;
+}
+.tc-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-end;
+  padding: 6px 12px 8px;
+  border-top: 1px solid #1a2030;
+}
+
+/* ── Модалка деталей задания ── */
+.tdm-modal {
+  width: 92%;
+  max-width: 480px;
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.tdm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid #1a2030;
+}
+.tdm-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.tdm-body {
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.tdm-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tdm-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.tdm-desc {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.tdm-desc.muted { color: var(--muted); font-style: italic; }
+.tdm-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  width: fit-content;
+}
+.tdm-status--done      { background: rgba(109,224,168,.12); color: #6de0a8; }
+.tdm-status--in_progress { background: rgba(78,166,255,.10); color: #4ea6ff; }
+.tdm-emp-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #131924;
+  border-radius: 7px;
+  border: 1px solid #1e293b;
+}
+.tdm-emp-main-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.tdm-emp-main-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: rgba(78,166,255,.12);
+  color: #4ea6ff;
+  margin-left: auto;
+}
+.tdm-emp-other {
+  font-size: 13px;
+  color: var(--text);
+  padding: 5px 10px;
+  background: #131924;
+  border-radius: 6px;
+  border: 1px solid #1a2030;
+}
+.tdm-emp-none {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+}
+.tdm-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.tdm-date-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.tdm-date-lbl { color: var(--muted); }
+.tdm-date-val { color: var(--text); font-weight: 600; }
+.tc-dates-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.tc-dates-lbl {
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.tc-dates-val {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-dim, #8899bb);
+  white-space: nowrap;
+}
+
+/* =====================================================================
+   РАЗДЕЛ «ЗАРПЛАТА»
+   ===================================================================== */
+
+/* Единый контейнер для всех разделов — одинаковая ширина и выравнивание */
+.section-inner {
+  max-width: 1800px;
+  width: 100%;
+}
+
+/* Зарплата: убираем горизонтальный отступ — он теперь от .main */
+.sal-inner {
+  padding: 0 0 24px;
+}
+
+/* Тулбар внутри sal-inner уже не нужен отдельный margin по бокам */
+.sal-inner .toolbar {
+  margin-bottom: 24px;
+}
+
+/* Карточки — убираем дублирующий горизонтальный padding */
+.sal-inner .sal-summary {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Таблица — убираем дублирующий горизонтальный margin */
+.sal-inner .sal-table-wrap {
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+}
+
+/* Таблица отчёта: тот же стиль что и .sal-table */
+#report .sal-table-wrap {
+  overflow-x: auto;
+  max-height: calc(100vh - 340px);
+}
+#report .sal-table-wrap table {
+  font-size: 13px;
+}
+#report .sal-table-wrap thead th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a2030;
+  font-weight: 600;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  background: #0b0e15;
+  position: sticky;
+  top: 0;
+}
+#report .sal-table-wrap tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a2030;
+  font-size: 13px;
+}
+
+/* .sal-toolbar gap inherits from .toolbar base (16px) */
+.sal-period-sel { width: auto; min-width: 120px; }
+
+/* Месячный пикер «Зарплаты» — использует стандартный .calendar-dropdown */
+#salMonthMenu { min-width: 180px; }
+
+
+/* ── Сводные карточки ── */
+.sal-summary {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  padding: 16px 24px 8px;
+}
+@media (max-width: 1400px) { .sal-summary { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 900px)  { .sal-summary { grid-template-columns: repeat(2, 1fr); } }
+
+.sal-card {
+  background: var(--panel);
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+  padding: 14px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sal-card-val {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sal-card-lbl {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.sal-card-sub {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.3;
+  margin-top: 1px;
+}
+
+.sal-card--warn  .sal-card-val { color: #ffb83c; }
+.sal-card--good  .sal-card-val { color: #4ec88c; }
+.sal-card--amber .sal-card-val { color: #ffb83c; }
+.sal-card--accent .sal-card-val { color: var(--accent); }
+
+/* ── Сводные карточки отчёта ── */
+.rep-summary {
+  grid-template-columns: repeat(8, 1fr);
+  padding-left: 0;
+  padding-right: 0;
+}
+@media (max-width: 1400px) { .rep-summary { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 900px)  { .rep-summary { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Таблица ── */
+.sal-table-wrap {
+  margin: 12px 24px 24px;
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.sal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 900px;
+}
+
+.sal-table thead th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a2030;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  background: #0b0e15;
+}
+
+.sal-table tbody tr {
+  border-bottom: 1px solid #141b26;
+  transition: background 0.12s;
+}
+.sal-table tbody tr:last-child { border-bottom: none; }
+.sal-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+
+.sal-table tbody td {
+  padding: 11px 12px;
+  color: var(--text);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+/* History modal inherits sal-table but without min-width */
+.sal-hist-table { min-width: unset; }
+
+/* ── Строка «выдано» ─────────────────────────────────────────────────── */
+.sal-table tbody tr.sal-row--paid { background: rgba(78,200,140,0.04); }
+.sal-table tbody tr.sal-row--paid:hover { background: rgba(78,200,140,0.07); }
+
+/* ── Бейдж статуса ───────────────────────────────────────────────────── */
+.sal-status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: .02em;
+}
+.sal-status--issued  { background: rgba(78,200,140,0.12); color: #4ec88c; border: 1px solid rgba(78,200,140,0.25); }
+.sal-status--partial { background: rgba(255,183,60,0.10);  color: #ffb73c; border: 1px solid rgba(255,183,60,0.25); }
+.sal-status--over    { background: rgba(255,92,92,0.10);   color: #ff5c5c; border: 1px solid rgba(255,92,92,0.25); }
+
+/* ── Тулбар над таблицей ─────────────────────────────────────────────── */
+.sal-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 24px 6px;
+  gap: 12px;
+}
+.sal-counter {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.sal-counter b { color: var(--text); font-weight: 600; }
+.sal-filter-btn {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .2s;
+}
+.sal-filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+.sal-filter-btn--active { background: rgba(78,166,255,0.1); border-color: rgba(78,166,255,0.4); color: var(--accent); }
+
+.sal-name  { font-weight: 500; }
+.sal-num   { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sal-bold  { font-weight: 600; }
+.sal-muted { color: var(--muted); font-weight: 400; }
+.sal-over  { color: #4ec88c; font-weight: 600; }
+.sal-under { color: #ff5d5d; font-weight: 600; }
+.sal-zero  { color: var(--muted); }
+
+.sal-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 28px 12px;
+  font-size: 13px;
+}
+
+/* ── Кнопки действий в строке ── */
+.sal-actions {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.sal-act-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
+  white-space: nowrap;
+}
+
+.sal-act-rate {
+  color: var(--accent);
+  border-color: rgba(78,166,255,0.2);
+}
+.sal-act-rate:hover {
+  background: rgba(78,166,255,0.08);
+  border-color: rgba(78,166,255,0.35);
+}
+
+.sal-act-adv {
+  color: #ffb83c;
+  border-color: rgba(255,184,60,0.2);
+}
+.sal-act-adv:hover {
+  background: rgba(255,184,60,0.08);
+  border-color: rgba(255,184,60,0.35);
+}
+
+.sal-act-pay {
+  color: #4ec88c;
+  border-color: rgba(78,200,140,0.2);
+}
+.sal-act-pay:hover {
+  background: rgba(78,200,140,0.08);
+  border-color: rgba(78,200,140,0.35);
+}
+
+.sal-act-hist {
+  color: var(--muted);
+  border-color: #1e2535;
+}
+.sal-act-hist:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: #252f42;
+  color: var(--text);
+}
+
+.sal-act-edit {
+  color: var(--muted);
+  border-color: #1e2535;
+}
+.sal-act-edit:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: #252f42;
+  color: var(--text);
+}
+
+/* ── Модалки зарплаты ── */
+.sal-modal { width: 420px; }
+.sal-hist-modal { width: 560px; }
+
+.sal-modal-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 1px;
+  line-height: 1.2;
+}
+
+.sal-hist-body {
+  padding: 0 !important;
+  overflow-y: auto;
+  max-height: 360px;
+}
+
+/* ── Бейджи типа в истории ── */
+.sal-hist-badge {
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 2px 9px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.sal-hist-adv {
+  color: #ffb83c;
+  background: rgba(255,184,60,0.09);
+  border-color: rgba(255,184,60,0.28);
+}
+
+.sal-hist-pay {
+  color: #4ec88c;
+  background: rgba(78,200,140,0.09);
+  border-color: rgba(78,200,140,0.28);
+}
+
+/* ── Будущий период: заблокированное состояние ── */
+.sal-table-wrap.disabled,
+.sal-summary.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+}
+
+.sal-future-msg {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 10px 0 6px;
+  display: none;
+}
+
+/* ── Кнопка «Выдать зарплату» (акцент) ── */
+.btn-accent {
+  background: rgba(78,166,255,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(78,166,255,0.3);
+}
+.btn-accent:hover { background: rgba(78,166,255,0.22); border-color: rgba(78,166,255,0.5); }
+
+#salSettingsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+/* ── Модалка «Выдать зарплату» ── */
+.sal-pay-modal { width: 480px; }
+
+.sal-pay-modal .sal-pay-stats,
+.sal-pay-modal .sal-pay-hours,
+.sal-pay-modal .sal-pay-adv-section,
+.sal-pay-modal .sal-pay-divider {
+  margin-left: 22px;
+  margin-right: 22px;
+}
+
+.sal-pay-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sal-pay-stat {
+  background: #0d1320;
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+}
+.sal-pay-stat-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.sal-pay-stat-lbl {
+  font-size: 10.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.sal-pay-stat--good .sal-pay-stat-val { color: #4ec88c; }
+.sal-pay-stat--warn .sal-pay-stat-val { color: #ff5c5c; }
+
+.sal-pay-hours-card {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+  margin-left: 22px;
+  margin-right: 22px;
+}
+.sal-pay-hitem {
+  background: #0d1320;
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+}
+.sal-pay-hitem--norm { border-color: #1e2b40; }
+.sal-pay-hicon { color: var(--muted); flex-shrink: 0; }
+.sal-pay-hval {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.sal-pay-hlbl {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.sal-pay-diff { font-size: 15px; font-weight: 700; }
+
+.sal-pay-date-label {
+  font-size: 12.5px;
+  color: var(--muted);
+  padding: 0 22px 4px;
+}
+
+.sal-pay-edit-warn {
+  margin: 8px 22px 0;
+  padding: 9px 12px;
+  background: rgba(255,183,60,0.08);
+  border: 1px solid rgba(255,183,60,0.35);
+  border-radius: 7px;
+  font-size: 12.5px;
+  color: #ffb73c;
+  font-weight: 500;
+}
+
+.sal-pay-overpay-warn {
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: rgba(255,183,60,0.08);
+  border: 1px solid rgba(255,183,60,0.3);
+  border-radius: 6px;
+  font-size: 12px;
+  color: #ffb73c;
+  line-height: 1.4;
+}
+
+.sal-pay-adv-section {
+  background: #0d1320;
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.sal-pay-adv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  border-bottom: 1px solid #1a2030;
+}
+.sal-pay-adv-total {
+  font-weight: 700;
+  color: #ffb83c;
+  font-size: 13px;
+}
+.sal-pay-adv-list { padding: 4px 0; }
+.sal-pay-adv-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  border-bottom: 1px solid #111820;
+}
+.sal-pay-adv-item:last-child { border-bottom: none; }
+.sal-pay-adv-date { color: var(--muted); }
+.sal-pay-adv-amt  { font-weight: 600; color: #ffb83c; }
+.sal-pay-adv-empty {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.sal-pay-divider {
+  height: 1px;
+  background: #1a2030;
+  margin: 4px 0 16px;
+}
+
+/* =====================================================================
+   (end Зарплата)
+   ===================================================================== */
+
+/* Бейдж «Фото» на карточке задания */
+.tc-btn--photos {
+  background: rgba(78,166,255,.08);
+  color: var(--accent);
+  border: 1px solid rgba(78,166,255,.22);
+}
+.tc-btn--photos:hover:not(:disabled) { background: rgba(78,166,255,.15); }
+
+/* Disabled: нет фото — серый, курсор default */
+.tc-btn--photos:disabled {
+  background: transparent;
+  color: #3a4155;
+  border-color: #1e2535;
+  opacity: 1;           /* не используем opacity, чтобы не «мутнел» весь блок */
+  cursor: default;
+}
+
+.tc-btn--photos .tc-photo-count {
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 1px 5px;
+  line-height: 1.4;
+  margin-left: 2px;
+}
+
+/* ── Кнопка «Комментарии» в карточке задания ────────────────────── */
+.tc-btn--comments {
+  color: #b48aff;
+  border-color: rgba(180,138,255,0.22);
+}
+.tc-btn--comments:hover {
+  background: rgba(180,138,255,0.07);
+  border-color: rgba(180,138,255,0.4);
+}
+
+/* ── Чат-модалка комментариев ────────────────────────────────────── */
+/* Переопределяем базовый .modal для чат-модалки */
+.tc-chat-modal {
+  width: 460px;
+  max-width: 96vw;
+  height: 560px;
+  max-height: 86vh;
+  padding: 0;           /* перекрываем padding: 28px 32px от .modal */
+  gap: 0;               /* перекрываем gap: 14px от .modal */
+  overflow: hidden;
+}
+.tc-chat-modal .task-modal-header {
+  flex-shrink: 0;
+  padding: 0 16px;
+  height: 52px;
+  border-bottom: 1px solid #1a2030;
+}
+.tc-chat-messages {
+  flex: 1;
+  min-height: 0;        /* позволяет flex-child скроллиться */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  scroll-behavior: smooth;
+}
+.tc-chat-empty,
+.tc-chat-loading {
+  margin: auto;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+.tc-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  /* направление задаётся модификаторами --admin / --employee */
+}
+
+/* Админ — справа */
+.tc-msg--admin   { align-items: flex-end; }
+/* Сотрудник — слева */
+.tc-msg--employee { align-items: flex-start; }
+
+/* Подпись автора над сообщением */
+.tc-msg-author {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 1px;
+  user-select: none;
+}
+.tc-msg-author--admin    { color: rgba(78,166,255,0.7); }
+.tc-msg-author--employee { color: rgba(154,160,172,0.75); }
+
+/* Bubble */
+.tc-msg-bubble {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 8px 12px;
+  max-width: 86%;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* Bubble — Админ (синий, хвост снизу-справа) */
+.tc-msg--admin .tc-msg-bubble {
+  background: rgba(78,166,255,0.13);
+  border: 1px solid rgba(78,166,255,0.24);
+  border-radius: 14px 14px 4px 14px;
+}
+
+/* Bubble — Сотрудник (нейтральный, хвост снизу-слева) */
+.tc-msg--employee .tc-msg-bubble {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 14px 14px 14px 4px;
+}
+
+.tc-msg-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tc-msg-time {
+  font-size: 10px;
+  color: var(--muted);
+  padding-right: 2px;
+}
+.tc-msg-actions {
+  display: none;
+  gap: 2px;
+}
+.tc-msg:hover .tc-msg-actions {
+  display: flex;
+}
+.tc-msg-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+.tc-msg-btn:hover { color: #4ea6ff; background: rgba(78,166,255,0.1); }
+.tc-msg-del:hover { color: #ff6b6b; background: rgba(255,107,107,0.1); }
+.tc-msg--editing .tc-msg-actions { display: none; }
+.tc-msg-edit-ta {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 7px 11px;
+  max-width: 86%;
+  width: 86%;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.tc-msg--admin .tc-msg-edit-ta {
+  background: rgba(78,166,255,0.08);
+  border: 1px solid rgba(78,166,255,0.35);
+  border-radius: 14px 14px 4px 14px;
+}
+.tc-msg--employee .tc-msg-edit-ta {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 14px 14px 14px 4px;
+}
+.tc-msg-edit-ta:focus { border-color: rgba(78,166,255,0.6); }
+/* ── Фото в чате ─────────────────────────────────────────────────── */
+.tc-msg-photo-wrap {
+  position: relative;
+  max-width: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: #0c0f15;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.tc-msg-photo {
+  display: block;
+  max-width: 220px;
+  max-height: 200px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: opacity 0.15s;
+}
+.tc-msg-photo:hover { opacity: 0.88; }
+.tc-msg-photo-del {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.tc-msg:hover .tc-msg-photo-del { display: flex; }
+.tc-msg-photo-del:hover { background: rgba(200,40,40,0.8); }
+
+/* ── Кнопка прикрепить фото в инпуте ────────────────────────────── */
+.tc-chat-input-wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 16px 14px;
+  border-top: 1px solid #1a2030;
+}
+.tc-chat-photo-btn {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid #252f42;
+  background: #141926;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.tc-chat-photo-btn:hover {
+  color: var(--accent);
+  border-color: rgba(78,166,255,0.4);
+  background: rgba(78,166,255,0.07);
+}
+.tc-chat-input {
+  flex: 1;
+  resize: none;
+  min-height: 38px;
+  max-height: 110px;
+  background: #141926;
+  border: 1px solid #252f42;
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.5;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.tc-chat-input:focus { border-color: rgba(78,166,255,0.45); }
+.tc-chat-input::placeholder { color: var(--muted); }
+.tc-chat-send-btn {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+.tc-chat-send-btn:hover   { background: #6ab0ff; }
+.tc-chat-send-btn:active  { opacity: 0.8; }
+.tc-chat-send-btn:disabled { opacity: 0.4; cursor: default; }
+.tc-chat-readonly-hint {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  padding: 6px 16px;
+  border-top: 1px solid #1a2030;
+  background: rgba(255,255,255,0.02);
+}
+
+/* ── Галерея фото (#taskPhotosModal) ────────────────────────────── */
+.tp-modal {
+  width: 580px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.tp-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.tp-modal-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tp-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tp-modal-footer {
+  padding: 12px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+/* Секция внутри галереи (Администратор / Сотрудники) */
+.tp-section { display: flex; flex-direction: column; }
+
+.tp-section-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 12px;
+}
+.tp-section-label svg { flex-shrink: 0; }
+
+.tp-emp-group { margin-bottom: 14px; }
+.tp-emp-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  opacity: .8;
+}
+
+.tp-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.tp-photo-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.02);
+  cursor: pointer;
+  transition: border-color .18s, transform .16s;
+}
+.tp-photo-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.tp-photo-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+
+.tp-photo-card-del {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.65);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+  z-index: 1;
+}
+.tp-photo-card-del:hover { background: var(--danger); }
+
+.tp-photo-empty {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  padding: 2px 0;
+}
+
+/* Кнопка загрузки в галерее */
+.tp-upload-wrap {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tp-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(78,166,255,.07);
+  border: 1px dashed rgba(78,166,255,.35);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 13px;
+  cursor: pointer;
+  transition: background .18s;
+  white-space: nowrap;
+  user-select: none;
+}
+.tp-upload-btn:hover { background: rgba(78,166,255,.14); }
+
+/* ── Lightbox ────────────────────────────────────────────────────── */
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plb-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.92);
+}
+
+.plb-img {
+  position: relative;
+  max-width: 88vw;
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.7);
+  user-select: none;
+}
+
+.plb-close {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  background: rgba(255,255,255,.12);
+  border: none;
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .18s;
+  z-index: 1;
+}
+.plb-close:hover { background: rgba(255,255,255,.24); }
+
+.plb-prev, .plb-next {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,.12);
+  border: none;
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .18s;
+  z-index: 1;
+}
+.plb-prev { left: 18px; }
+.plb-next { right: 18px; }
+.plb-prev:hover, .plb-next:hover { background: rgba(255,255,255,.24); }
+.plb-prev:disabled, .plb-next:disabled { opacity: .25; cursor: not-allowed; }
+
+/* =====================================================================
+   РАЗДЕЛ «АВАНСЫ»
+   ===================================================================== */
+
+.adv-block {
+  margin: 20px 24px;
+}
+
+.adv-block-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.adv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.adv-table thead th {
+  text-align: left;
+  padding: 9px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: #4a5265;
+  border-bottom: 1px solid var(--border);
+  background: #0d1119;
+}
+
+.adv-table tbody tr {
+  border-bottom: 1px solid #141b26;
+  transition: background .12s;
+}
+
+.adv-table tbody tr:hover {
+  background: rgba(255,255,255,0.025);
+}
+
+.adv-table tbody td {
+  padding: 10px 14px;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.adv-empty-cell {
+  text-align: center;
+  color: var(--muted);
+  padding: 28px 14px !important;
+  font-size: 13px;
+}
+
+/* Salary inline-edit */
+.adv-salary-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adv-salary-val {
+  font-weight: 500;
+}
+
+.adv-salary-edit-btn {
+  background: none;
+  border: none;
+  color: #3a4560;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  transition: color .15s;
+}
+.adv-salary-edit-btn:hover { color: var(--accent); }
+
+.adv-salary-input {
+  width: 90px;
+  background: #0d1119;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  padding: 3px 8px;
+  outline: none;
+}
+
+/* Balance coloring */
+.adv-positive { color: #4caf82; }
+.adv-negative { color: var(--danger); }
+.adv-zero     { color: var(--muted); }
+
+/* Delete button in history */
+.adv-del-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: #3a4560;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.adv-del-btn:hover {
+  color: var(--danger);
+  border-color: rgba(255,93,93,0.3);
+  background: rgba(255,93,93,0.07);
+}
+
+/* ── Advance modal ── */
+.adv-modal {
+  width: 420px;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid #1e2535;
+  background: #12171f;
+  box-shadow: 0 32px 72px rgba(0,0,0,0.65);
+  display: flex;
+  flex-direction: column;
+}
+
+.adv-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #1a2030;
+  flex-shrink: 0;
+}
+
+.adv-modal-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(76,175,130,0.12);
+  border: 1px solid rgba(76,175,130,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4caf82;
+  flex-shrink: 0;
+}
+
+.adv-modal-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+}
+
+.adv-modal-body {
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.adv-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adv-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--muted);
+}
+
+.adv-select {
+  width: 100%;
+}
+
+/* ── Advances: employee name display in modal ── */
+.adv-field-emp-display .adv-emp-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 8px 0 2px;
+}
+
+/* ── Advances: issue button in table row ── */
+.adv-issue-btn {
+  font-size: 12px;
+  padding: 5px 14px;
+  height: 30px;
+  white-space: nowrap;
+}
+
+/* ── Advances toolbar period selectors ── */
+.adv-toolbar {
+  gap: 8px;
+}
+
+.adv-period-sel {
+  width: auto;
+  min-width: 110px;
+}
+
+/* ── Advances: edit button in history row ── */
+.adv-edit-btn {
+  background: none;
+  border: 1px solid transparent;
+  color: #3a4560;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .15s, border-color .15s, background .15s;
+}
+.adv-edit-btn:hover {
+  color: var(--accent);
+  border-color: rgba(78,166,255,0.3);
+  background: rgba(78,166,255,0.07);
+}
+
+/* ===================================================================== */
+/*                              БЛОКНОТ                                   */
+/* ===================================================================== */
+
+.main--notepad { padding-bottom: 0 !important; }
+.main--notepad .content { overflow: hidden; height: 100%; }
+
+#notepad.active {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid #1a2030;
+  border-radius: 8px;
+}
+
+.np-sidebar {
+  width: 300px;
+  min-width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.np-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.np-list-empty {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.np-card {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background .12s;
+}
+.np-card:hover { background: rgba(255,255,255,0.03); }
+.np-card--active {
+  background: rgba(78,166,255,0.1);
+  border-left: 3px solid var(--accent);
+  padding-left: 13px;
+}
+
+.np-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.np-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+.np-card-date { font-size: 11px; color: var(--muted); flex-shrink: 0; }
+.np-card-sep  { font-size: 11px; color: var(--muted); opacity: .4; flex-shrink: 0; }
+.np-card-preview {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.np-editor {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+}
+.np-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 14px;
+  opacity: .45;
+}
+.np-editor-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.np-textarea {
+  flex: 1;
+  min-height: 0;
+  resize: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.6;
+  padding: 24px 32px;
+  caret-color: var(--accent);
+}
+.np-textarea::placeholder { color: rgba(154,160,172,0.25); }
+
+/* =====================================================================
+   УВЕДОМЛЕНИЯ
+   ===================================================================== */
+
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 4px;
+}
+
+/* ── Группа ── */
+.notif-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.notif-group-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.notif-group-icon--shift { color: #f0a04b; }
+.notif-group-icon--task  { color: #4ea6ff; }
+
+.notif-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  flex: 1;
+}
+
+.notif-group-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  background: #141a28;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 8px;
+  line-height: 1.4;
+}
+
+.notif-group-empty {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 4px;
+  color: #353f52;
+  font-size: 12.5px;
+}
+
+.notif-group-empty-icon {
+  display: flex;
+  align-items: center;
+  color: #263040;
+}
+
+/* ── Карточка ── */
+.notif-card {
+  background: #0c1018;
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.notif-card:last-child { margin-bottom: 0; }
+.notif-card:hover { background: #0f1420; border-color: #222c40; }
+
+.notif-card--shift   { border-left-color: rgba(240,160,75,0.5); }
+.notif-card--deadline { border-left-color: rgba(78,166,255,0.45); }
+
+/* Head */
+.notif-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.notif-card-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.notif-card-icon--warn { color: #f0a04b; }
+.notif-card-icon--task { color: #4ea6ff; }
+
+.notif-card-emp {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notif-card-time {
+  font-size: 11px;
+  color: #3a4560;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Message */
+.notif-card-msg {
+  font-size: 12px;
+  color: #7a8499;
+  line-height: 1.45;
+  padding-left: 21px;
+}
+
+/* Shift: незавершённые задания */
+.notif-card-tasks {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #080c14;
+  border: 1px solid #161e2e;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.notif-card-tasks-count {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #e09840;
+  font-weight: 600;
+}
+
+.notif-card-tasks-names {
+  font-size: 11px;
+  color: #424f66;
+  padding-left: 15px;
+}
+
+/* Deadline: детали */
+.notif-card-details {
+  margin-top: 8px;
+  padding-left: 21px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.notif-card-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  background: #080c14;
+  border: 1px solid #161e2e;
+  border-radius: 6px;
+  padding: 3px 9px;
+  color: #7a8499;
+  line-height: 1.3;
+}
+.notif-card-detail svg { flex-shrink: 0; opacity: 0.7; }
+.notif-card-detail b { color: #4a5a72; font-weight: 600; }
+
+.notif-card-detail--time   { color: #b8975a; border-color: #1e1a10; background: #0c0a06; }
+.notif-card-detail--time b { color: #6e5a30; }
+.notif-card-detail--time svg { color: #b8975a; }
+
+.notif-card-detail--task   { color: #9aa0ac; border-color: #1a2030; background: #090d16; }
+.notif-card-detail--task svg { color: #4ea6ff; }
+
+.notif-empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  padding: 60px 0;
+}
+
+input[type="time"].task-input {
+  color-scheme: dark;
+}
+
+/* Employee card star rating */
+.ec-rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0 2px;
+}
+.ec-star {
+  font-size: 14px;
+  line-height: 1;
+}
+.ec-star--on  { color: #f0c040; }
+.ec-star--off { color: #2e3a4d; }
+.ec-rating-val {
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+/* ── Модалка смен по дням ── */
+
+/* Двухстрочный заголовок */
+.sdm-title-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sdm-title-wrap .task-modal-title {
+  flex: none;
+  line-height: 1.2;
+}
+.sdm-title-sub {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* ── Размер модалки — адаптивный, без inline-стиля ──────────────────── */
+.sdm-modal {
+  width: 90%;
+  max-width: 680px;
+}
+
+/* Тело: вертикальный скролл задан inline (overflow-y:auto, max-height:65vh).
+   overflow-x:auto здесь безопасен — #shiftDaysModalBody сам является
+   scroll-container для position:sticky на <th>, поэтому sticky не ломается. */
+#shiftDaysModalBody {
+  overflow-x: auto;
+}
+#shiftDaysModalBody::-webkit-scrollbar:horizontal { height: 4px; }
+#shiftDaysModalBody::-webkit-scrollbar-thumb:horizontal { background: #2a3550; border-radius: 2px; }
+
+.sdm-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 13px;
+  table-layout: fixed;
+}
+
+/* Ширины колонок через colgroup */
+.sdm-col-date    { width: 160px; }
+.sdm-col-time    { width: 80px; }
+.sdm-col-worked  { width: 90px; }
+.sdm-col-actions { width: 160px; }
+
+.sdm-table th {
+  background: #131820;
+  color: var(--muted);
+  font-weight: 500;
+  padding: 10px 12px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 1px 0 #1f2530;
+}
+.sdm-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sdm-table tr:last-child td { border-bottom: none; }
+.sdm-table tr.sdm-row--empty td { color: var(--muted); }
+.sdm-table tr.sdm-row--open td { color: var(--accent); }
+.sdm-table tr.sdm-row--editing td { background: #1a1f29; }
+
+/* Строка-заголовок дня */
+.sdm-day-header td {
+  background: #131820;
+  color: var(--text);
+  font-size: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #1f2530;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sdm-day-header.sdm-row--empty td { color: var(--muted); }
+
+/* Строки интервалов */
+.sdm-shift-row td { padding: 7px 12px; }
+.sdm-cell-label {
+  padding-left: 24px !important;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Колонка "Отработано" */
+.sdm-worked { font-variant-numeric: tabular-nums; }
+
+/* Колонка "Действия" */
+.sdm-cell-actions { white-space: nowrap; text-align: right; }
+
+/* Кнопка строки дня — стиль идентичен sdm-btn-edit */
+.sdm-btn-add {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 12px;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s;
+}
+.sdm-btn-add:hover { color: var(--text); border-color: var(--accent); }
+
+/* Поля времени */
+.sdm-time-inp {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+  padding: 5px 6px;
+  width: 100%;
+  max-width: 90px;
+  outline: none;
+  box-sizing: border-box;
+}
+.sdm-time-inp:focus { border-color: var(--accent); }
+
+/* Кнопки действий */
+.sdm-btn-edit,
+.sdm-btn-save {
+  display: inline-block;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 12px;
+  white-space: nowrap;
+  transition: opacity .15s, color .15s, border-color .15s;
+}
+.sdm-btn-edit {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.sdm-btn-edit:hover { color: var(--text); border-color: var(--accent); }
+.sdm-btn-save {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+}
+.sdm-btn-save:hover { opacity: .85; }
+
+
+
+/* =====================================================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ — только <= 768px. Десктоп не трогаем.
+   ===================================================================== */
+
+/* Мобильный хедер: скрыт на ПК */
+.mob-header  { display: none; }
+.mob-overlay { display: none; }
+
+@media (max-width: 768px) {
+
+  /* Сброс box-sizing */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  /* Запрет горизонтального overflow.
+     max-width:100vw на * НЕ используем — это ломает padded-контейнеры
+     на Samsung Chrome (100vw != 100% внутри padded-родителя). */
+  html { overflow-x: hidden; }
+  body { overflow-x: hidden; position: relative; }
+
+  /* Мобильный хедер */
+  .mob-header {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 54px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    z-index: 400;
+    padding: 0 12px;
+    gap: 10px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.35);
+  }
+
+  .mob-burger {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex-shrink: 0;
+    padding: 0;
+    transition: border-color .2s, background .2s;
+  }
+
+  .mob-burger span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--muted);
+    border-radius: 2px;
+    transition: transform .22s, opacity .22s;
+  }
+  .mob-nav-open .mob-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .mob-nav-open .mob-burger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .mob-nav-open .mob-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mob-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+
+  .mob-logout-btn {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: color .2s, border-color .2s, background .2s;
+  }
+
+  /* Оверлей сайдбара */
+  .mob-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 350;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+  }
+  .mob-nav-open .mob-overlay { opacity: 1; pointer-events: all; }
+
+  /* Боковое меню */
+  .sidebar {
+    width: 270px;
+    max-width: 82vw;
+    transform: translateX(-100%);
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+    z-index: 500;
+    top: 0;
+  }
+  .mob-nav-open .sidebar { transform: translateX(0); }
+
+  .side-head  { height: 54px; font-size: 16px; padding-left: 18px; }
+  .nav-btn    { padding: 14px 18px 14px 22px; font-size: 14px; }
+  .logout-btn { font-size: 14px; }
+
+  /* Основная рабочая область */
+  .main {
+    position: fixed;
+    top: 54px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 0 12px 16px;
+    overflow-x: hidden;
+  }
+
+  .content { overflow-x: hidden; width: 100%; }
+
+  /* Toolbar */
+  .toolbar {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    gap: 8px;
+    margin-bottom: 12px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .toolbar .spacer { display: none; }
+  .toolbar .btn    { flex-shrink: 0; flex-grow: 0; }
+
+  /* Сброс desktop min-width:400px на полях поиска */
+  #empSearch,
+  #taskSearch {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 100% !important;
+  }
+
+  #tasks .toolbar .input {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Сброс desktop width:400px / min-width:400px у .sel-wrap */
+  .sel-wrap {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: 1 1 auto !important;
+  }
+  .sel-wrap select { width: 100%; min-width: 0; }
+
+  #addEmployeeBtn,
+  #addTaskBtn {
+    margin-left: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Employees toolbar */
+  #employees .toolbar #empSearch          { order: 1; flex: 1 1 100%; }
+  #employees .toolbar .sel-wrap           { order: 2; flex: 1 1 auto; }
+  #employees .toolbar .calendar-dropdown { order: 3; flex-shrink: 0; }
+  #employees .toolbar #addEmployeeBtn     { order: 4; flex-shrink: 0; margin-left: 0; }
+
+  /* Tasks toolbar */
+  #tasks .toolbar #taskSearch             { order: 1; flex: 1 1 100%; }
+  #tasks .toolbar .calendar-dropdown     { order: 2; flex: 1 1 auto; }
+  #tasks .toolbar #addTaskBtn             { order: 3; flex-shrink: 0; margin-left: 0; }
+
+  /* Сотрудники */
+  .employee-cards {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .employee-card          { padding: 14px; width: 100%; min-width: 0; overflow: hidden; }
+  .employee-card-name     { font-size: 14px; min-width: 0; }
+  .employee-card-person   { min-width: 0; overflow: hidden; }
+
+  .employee-card-secondary,
+  .employee-card-primary  { flex-wrap: wrap; gap: 6px 12px; min-width: 0; }
+
+  .employee-card-actions  { flex-wrap: wrap; gap: 8px; }
+  .employee-card-actions .btn {
+    font-size: 13px;
+    padding: 9px 8px;
+    min-height: 40px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  /* Задания */
+  .task-cards {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .task-card { width: 100%; min-width: 0; overflow: hidden; }
+
+  .tc-footer { padding: 10px 12px 12px; gap: 5px; flex-wrap: wrap; }
+  .tc-btn    { flex: 1 1 calc(50% - 3px); height: 38px; font-size: 12px; min-height: 38px; min-width: 0; }
+
+  /* Зарплата */
+  .sal-summary {
+    grid-template-columns: repeat(2, 1fr) !important;
+    padding: 10px 0 8px !important;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .sal-card { padding: 12px 10px 10px; min-width: 0; overflow: hidden; }
+
+  .sal-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(100vh - 290px);
+    width: 100%;
+  }
+
+  .sal-inner .sal-table-wrap { overflow-x: auto; }
+  .sal-table-toolbar          { flex-wrap: wrap; padding: 8px 0 6px; gap: 8px; width: 100%; }
+  .sal-toolbar                { flex-wrap: wrap; gap: 8px; }
+  .sal-toolbar .sel-wrap      { flex: 1 1 calc(100% - 110px); }
+  #salAdvBtn                  { flex-shrink: 0; }
+  #salSettingsBtn             { flex-shrink: 0; }
+
+  /* Отчёт */
+  .rep-summary {
+    grid-template-columns: repeat(2, 1fr) !important;
+    padding: 10px 0 8px !important;
+    gap: 8px;
+    width: 100%;
+  }
+
+  #report .sal-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(100vh - 290px);
+    width: 100%;
+  }
+
+  #reportTable { min-width: 800px; }
+
+  #report .report-toolbar { flex-wrap: wrap; gap: 8px; }
+  #report .report-toolbar .sel-wrap {
+    flex: 1 1 100%;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  #report .report-toolbar #reportEmployee { width: 100%; min-width: 0; }
+  #reportPrint { flex-shrink: 0; }
+
+  /* Уведомления */
+  #notifications .toolbar    { flex-wrap: wrap; gap: 8px; }
+  #notifSettingsBtn           { margin-left: auto; flex-shrink: 0; }
+
+  .notif-card                 { padding: 10px 12px; min-width: 0; overflow: hidden; }
+  .notif-card-head            { flex-wrap: wrap; gap: 5px; }
+  .notif-card-emp             { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .notif-card-msg             { padding-left: 0; font-size: 12.5px; word-break: break-word; }
+  .notif-card-tasks           { padding: 6px 10px; }
+  .notif-card-details         { flex-wrap: wrap; padding-left: 0; }
+
+  /* Блокнот */
+  #notepad.active { flex-direction: column; border-radius: 6px; overflow: hidden; width: 100%; }
+
+  .np-sidebar {
+    width: 100%;
+    min-width: 0 !important;
+    height: auto;
+    max-height: 200px;
+    min-height: 100px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .np-editor   { flex: 1; min-height: 160px; min-width: 0; width: 100%; overflow: hidden; }
+  .np-textarea { padding: 16px; font-size: 14px; width: 100%; }
+  .main--notepad { padding-bottom: 0 !important; }
+
+  /* Администратор */
+  #admin    { padding: 16px 0 0; overflow-y: auto; }
+  .adm-wrap { max-width: 100%; width: 100%; }
+  .adm-card { padding: 16px 14px; }
+
+  .adm-field       { flex-wrap: wrap; gap: 6px; align-items: flex-start; }
+  .adm-field-label { width: 60px; min-width: 60px; flex-shrink: 0; }
+  .adm-field-val   { font-size: 13px; word-break: break-all; flex: 1; min-width: 0; }
+  .adm-pwd-wrap    { flex: 1; min-width: 0; }
+  .adm-field-btn   { align-self: flex-end; flex-shrink: 0; }
+
+  /* Модалки: нижний лист */
+  .modal-overlay { padding: 0; align-items: flex-end; }
+
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px 16px 0 0 !important;
+    padding: 20px 16px !important;
+    max-height: 90vh;
+    animation: mobSlideUp .28s cubic-bezier(.16,1,.3,1) !important;
+  }
+
+  .modal.large { max-height: 92vh; overflow-y: auto; }
+
+  #addTaskModal .task-modal,
+  #editTaskModal .task-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 93vh;
+    border-radius: 16px 16px 0 0 !important;
+    animation: mobSlideUp .28s cubic-bezier(.16,1,.3,1) !important;
+  }
+
+  #addModal .aemp-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px 16px 0 0 !important;
+    animation: mobSlideUp .28s cubic-bezier(.16,1,.3,1) !important;
+  }
+
+  .select-main-modal,
+  .adv-modal,
+  .sal-modal,
+  .sal-hist-modal,
+  .sal-pay-modal,
+  .confirm-del-modal,
+  .emp-profile-modal,
+  .emp-edit-modal,
+  .adm-edit-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px 16px 0 0 !important;
+    animation: mobSlideUp .28s cubic-bezier(.16,1,.3,1) !important;
+  }
+
+  .tc-chat-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 88vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    animation: mobSlideUp .28s cubic-bezier(.16,1,.3,1) !important;
+  }
+
+  .tp-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0 !important;
+    animation: mobSlideUp .28s cubic-bezier(.16,1,.3,1) !important;
+  }
+
+  #tasksModal .modal {
+    height: 92vh;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0 !important;
+    animation: mobSlideUp .28s cubic-bezier(.16,1,.3,1) !important;
+  }
+
+  @keyframes mobSlideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .task-modal-body  { overflow-x: hidden; }
+  .select-main-body { overflow-x: hidden; }
+
+  .task-modal-footer { padding: 12px 16px; flex-wrap: nowrap; overflow: hidden; }
+
+  .task-btn-cancel,
+  .task-btn-save,
+  .task-btn-next,
+  .task-btn-back  { height: 46px; font-size: 14px; min-width: 0; flex-shrink: 0; }
+
+  .task-input      { height: 48px !important; font-size: 15px; }
+  .task-select     { height: 48px; font-size: 15px; }
+  .task-textarea   { font-size: 15px; min-height: 100px; width: 100%; }
+  .task-emp-search { height: 46px; font-size: 14px; }
+
+  .tp-inputs-row { flex-wrap: wrap; gap: 8px; }
+  .tp-input      { width: 100px; height: 46px; font-size: 15px; }
+
+  .wizard-steps { padding: 10px 14px; gap: 0; }
+  .wz-label     { display: none; }
+  .wz-connector { margin: 0 6px; }
+
+  .sal-actions { flex-direction: column; gap: 3px; }
+  .sal-act-btn { width: 100%; justify-content: center; font-size: 11px; }
+
+  .sal-pay-stats,
+  .sal-pay-hours-card {
+    grid-template-columns: repeat(2, 1fr) !important;
+    margin-left: 14px !important;
+    margin-right: 14px !important;
+  }
+
+  .tp-photo-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+
+  .plb-prev       { left: 8px; }
+  .plb-next       { right: 8px; }
+  .plb-prev,
+  .plb-next       { width: 38px; height: 38px; }
+
+  .epm-header  { padding: 16px 16px 14px; }
+  .epm-top     { padding: 16px 16px 0; gap: 14px; }
+  .epm-actions { padding: 12px 16px 16px; gap: 7px; }
+  .epm-btn     { height: 44px; }
+
+  #shiftDaysModal .modal { max-height: 88vh; }
+  #shiftDaysModalBody { overflow-x: auto; }
+  .sdm-col-date    { width: 120px; }
+  .sdm-col-time    { width: 68px; }
+  .sdm-col-worked  { width: 74px; }
+  .sdm-col-actions { width: 130px; }
+  .sdm-table th,
+  .sdm-table td   { padding-left: 8px; padding-right: 8px; }
+  .sdm-day-header td { padding-left: 8px; padding-right: 8px; }
+  .sdm-shift-row td  { padding-left: 8px; padding-right: 8px; }
+  .sdm-cell-label    { padding-left: 18px !important; }
+  .sdm-btn-edit, .sdm-btn-add, .sdm-btn-save { font-size: 11px; padding: 3px 8px; }
+
+  .calendar-toggle { height: 42px; padding: 0 12px; font-size: 13px; white-space: nowrap; }
+
+  .section-inner { padding-bottom: 16px; width: 100%; }
+  .sal-inner     { padding: 0 0 16px; width: 100%; }
+
+  .task-block         { padding: 14px 16px; }
+  .task-modal-divider { margin: 0 16px; }
+  .tc-employees       { margin: 8px 12px; padding: 8px 10px; }
+
+  .notif-actions { flex-wrap: wrap; gap: 4px; }
+  .notif-btn     { height: 32px; font-size: 12px; }
+
+}
+
+/* Планшет: 769–1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .sidebar { width: 220px; }
+  .main    { left: 220px; padding: 0 24px 24px; }
+
+  .employee-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .task-cards     { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sal-summary    { grid-template-columns: repeat(4, 1fr); }
+
+  #empSearch,
+  #taskSearch     { min-width: 200px !important; max-width: 300px !important; }
+
+  .sel-wrap       { min-width: 180px !important; width: 180px !important; }
+
+}

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Администратор — Вход</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e1117">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .pwd-wrap {
+      position: relative;
+      width: 100%;
+    }
+    .pwd-wrap .input {
+      padding-right: 44px;
+    }
+    .pwd-eye {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted, #6b7280);
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .pwd-eye:hover { color: var(--accent, #4ea6ff); }
+    .pwd-eye svg   { display: block; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <main class="login-wrap">
+    <div class="login-card">
+      <h1 class="app-title">Colorado</h1>
+      <p class="subtitle">Вход администратора</p>
+
+      <div class="form-group">
+        <input id="adminLogin" type="text" class="input" placeholder="Логин" autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <div class="pwd-wrap">
+          <input id="adminPassword" type="password" class="input" placeholder="Пароль" autocomplete="current-password">
+          <button type="button" class="pwd-eye" id="pwdEyeBtn" tabindex="-1" aria-label="Показать пароль">
+            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <p id="adminError" class="error-msg"></p>
+      </div>
+
+      <button id="adminLoginBtn" class="btn primary">Войти</button>
+    </div>
+  </main>
+
+  <script>
+  const API = 'http://localhost:3000';
+
+  const EYE_OPEN  = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  const EYE_CLOSE = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>'
+                  + '<path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>'
+                  + '<line x1="1" y1="1" x2="23" y2="23"/>';
+
+  const loginInput = document.getElementById('adminLogin');
+  const pwdInput   = document.getElementById('adminPassword');
+  const btn        = document.getElementById('adminLoginBtn');
+  const err        = document.getElementById('adminError');
+  const card       = document.querySelector('.login-card');
+  const eyeBtn     = document.getElementById('pwdEyeBtn');
+  const eyeIcon    = document.getElementById('eyeIcon');
+
+  /* ── Глазок ─────────────────────────────────────────────────────── */
+  eyeBtn.addEventListener('click', () => {
+    const hidden = pwdInput.type === 'password';
+    pwdInput.type = hidden ? 'text' : 'password';
+    eyeIcon.innerHTML = hidden ? EYE_CLOSE : EYE_OPEN;
+    eyeBtn.setAttribute('aria-label', hidden ? 'Скрыть пароль' : 'Показать пароль');
+    pwdInput.focus();
+  });
+
+  /* ── Утилиты ────────────────────────────────────────────────────── */
+  function showErr(msg) {
+    err.textContent = msg;
+    card.classList.toggle('has-error', !!msg);
+  }
+
+  function setLoading(on) {
+    btn.disabled    = on;
+    btn.textContent = on ? 'Вход…' : 'Войти';
+  }
+
+  function clearBadToken() {
+    const t = localStorage.getItem('adminToken');
+    if (!t || t === 'null' || t === 'undefined' || t === '') {
+      localStorage.removeItem('adminToken');
+      return null;
+    }
+    return t;
+  }
+
+  /* ── Проверить существующий токен ──────────────────────────────── */
+  async function tryAutoLogin() {
+    const token = clearBadToken();
+    if (!token) return; // нет токена — показываем форму входа
+
+    try {
+      const res = await fetch(API + '/api/admin/verify', {
+        headers: { 'x-admin-token': token }
+      });
+      if (res.ok) {
+        window.location.replace('./admin.html');
+      } else {
+        // токен устарел или невалиден — сбрасываем
+        localStorage.removeItem('adminToken');
+      }
+    } catch {
+      // сервер недоступен — сбрасываем токен и показываем форму
+      localStorage.removeItem('adminToken');
+    }
+  }
+
+  /* ── Вход ──────────────────────────────────────────────────────── */
+  async function doLogin() {
+    const login    = loginInput.value.trim();
+    const password = pwdInput.value.trim();
+
+    if (!login || !password) {
+      showErr('Введите логин и пароль');
+      if (!login) loginInput.focus();
+      else        pwdInput.focus();
+      return;
+    }
+
+    showErr('');
+    setLoading(true);
+
+    try {
+      const res = await fetch(API + '/api/admin/login', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ login, password })
+      });
+
+      if (res.status === 401) {
+        showErr('Неверный логин или пароль');
+        pwdInput.select();
+        return;
+      }
+
+      if (!res.ok) {
+        showErr('Ошибка сервера (' + res.status + ')');
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!data.token) {
+        showErr('Сервер вернул пустой токен');
+        return;
+      }
+
+      showErr('');
+      localStorage.setItem('adminToken', data.token);
+      window.location.href = './admin.html';
+
+    } catch {
+      showErr('Нет соединения с сервером');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  btn.addEventListener('click', doLogin);
+
+  pwdInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+  loginInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') pwdInput.focus();
+  });
+
+  loginInput.addEventListener('input', () => { if (err.textContent) showErr(''); });
+  pwdInput.addEventListener('input',   () => { if (err.textContent) showErr(''); });
+
+  /* ── Запуск ──────────────────────────────────────────────────────── */
+  tryAutoLogin();
+  loginInput.focus();
+  </script>
+</body>
+</html>

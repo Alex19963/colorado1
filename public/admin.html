@@ -1,0 +1,1360 @@
+﻿<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Colorado — Админ-панель</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e1117">
+  <link rel="stylesheet" href="./admin-style.css">
+</head>
+<body>
+
+<!-- ═══════════════════ МОБИЛЬНЫЙ ХЕДЕР ═══════════════════ -->
+<div class="mob-header" id="mobHeader">
+  <button class="mob-burger" id="mobBurger" aria-label="Открыть меню">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <span class="mob-title" id="mobTitle">Админ-панель</span>
+  <button class="mob-logout-btn" id="mobLogoutBtn" aria-label="Выйти">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+  </button>
+</div>
+<div class="mob-overlay" id="mobOverlay"></div>
+
+
+<div class="modal-overlay" id="addModal">
+  <div class="modal task-modal aemp-modal">
+
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+      </div>
+      <h3 class="task-modal-title">Новый сотрудник</h3>
+      <button class="task-modal-close" id="addEmpCloseBtn" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="task-modal-body">
+
+      <!-- Фото -->
+      <div class="task-block aemp-photo-block">
+        <div class="task-block-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Фото
+        </div>
+        <div class="aemp-photo-row">
+          <label for="empPhotoInput" class="eem-avatar-label aemp-avatar-label" title="Загрузить фото">
+            <img id="empPhotoPreview" class="eem-avatar-preview" alt="Фото сотрудника">
+            <div class="eem-avatar-overlay">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+          </label>
+          <input id="empPhotoInput" type="file" accept="image/*" hidden>
+          <span class="aemp-photo-hint">Нажмите на аватар,<br>чтобы загрузить фото</span>
+        </div>
+      </div>
+
+      <div class="task-modal-divider"></div>
+
+      <!-- ФИО -->
+      <div class="task-block">
+        <label class="task-block-label" for="empName">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          ФИО
+        </label>
+        <input id="empName" class="task-input" type="text" placeholder="Введите ФИО">
+        <p class="task-field-error" id="addEmpNameError"></p>
+      </div>
+
+      <!-- Пароль -->
+      <div class="task-block">
+        <label class="task-block-label" for="empPwd">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Пароль
+        </label>
+        <input id="empPwd" class="task-input" type="text" placeholder="Введите пароль" inputmode="numeric">
+        <p class="task-field-error" id="addEmpPwdError"></p>
+      </div>
+
+    </div>
+
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="cancelAdd">Отмена</button>
+      <button class="task-btn-save" id="saveAdd">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Сохранить
+      </button>
+    </div>
+
+
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="addTaskModal">
+  <div class="modal large task-modal">
+
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <h3 class="task-modal-title">Добавить задание</h3>
+      <button class="task-modal-close" id="addTaskCloseBtn" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Wizard step indicator -->
+    <div class="wizard-steps" id="addTaskWizardSteps">
+      <div class="wz-step active" data-step="1">
+        <div class="wz-dot">1</div>
+        <span class="wz-label">Основное</span>
+      </div>
+      <div class="wz-connector"></div>
+      <div class="wz-step" data-step="2">
+        <div class="wz-dot">2</div>
+        <span class="wz-label">Сотрудники</span>
+      </div>
+      
+      <div class="wz-connector"></div>
+      <div class="wz-step" data-step="3">
+        <div class="wz-dot">3</div>
+        <span class="wz-label">Главный</span>
+      </div>
+      <div class="wz-connector"></div>
+      <div class="wz-step" data-step="4">
+        <div class="wz-dot">4</div>
+        <span class="wz-label">Фото</span>
+      </div>
+    </div>
+
+    <div class="task-modal-body">
+
+      <!-- Panel 1: Date / Time / Title / Description -->
+      <div class="wizard-panel active" data-panel="1">
+
+        <div class="task-block">
+          <div class="task-block-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Дата
+          </div>
+          <div class="task-date-row">
+            <span id="taskMonthLabel" class="task-month-badge"></span>
+            <select id="taskDay" class="task-select"></select>
+          </div>
+          <div class="tp-block">
+            <div class="tp-top-row">
+              <span class="tp-label">Время работы</span>
+              <button type="button" class="tp-no-time-btn" id="taskNoTimeBtn">Без времени</button>
+            </div>
+            <div id="taskTimeFields" class="tp-fields">
+              <div class="tp-inputs-row">
+                <input id="taskTimeFrom" type="time" class="tp-input">
+                <span class="tp-sep">—</span>
+                <input id="taskDueTime" type="time" class="tp-input">
+                <span class="tp-duration" id="taskDuration"></span>
+              </div>
+              <div class="tp-presets">
+                <button type="button" class="tp-preset" data-hours="1">+1ч</button>
+                <button type="button" class="tp-preset" data-hours="2">+2ч</button>
+                <button type="button" class="tp-preset" data-hours="4">+4ч</button>
+              </div>
+              <div class="tp-error" id="taskTimeError"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-modal-divider"></div>
+
+        <div class="task-block">
+          <label class="task-block-label" for="taskTitle">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Заголовок
+          </label>
+          <input id="taskTitle" class="task-input" type="text" placeholder="Введите заголовок задания">
+          <div class="task-field-error" id="taskTitleError"></div>
+        </div>
+
+        <div class="task-block">
+          <label class="task-block-label" for="taskDesc">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+            Описание
+          </label>
+          <textarea id="taskDesc" class="task-textarea" placeholder="Подробное описание задания..."></textarea>
+          <div class="task-field-error" id="taskDescError"></div>
+        </div>
+
+      </div><!-- /panel 1 -->
+
+      <!-- Panel 2: Employees -->
+      <div class="wizard-panel" data-panel="2">
+
+        <div class="task-block">
+          <div class="task-block-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Сотрудники
+          </div>
+          <div class="task-emp-search-wrap">
+            <svg class="task-emp-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" class="task-emp-search" id="taskEmpSearch" placeholder="Поиск по имени..."
+                   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                   name="emp-filter-field" role="searchbox" aria-label="Фильтр сотрудников">
+          </div>
+          <div id="employeeCheckboxes" class="task-checkbox-grid"></div>
+          <div class="task-field-error" id="taskEmpError"></div>
+        </div>
+
+      </div><!-- /panel 2 -->
+
+      <!-- Panel 3: Main Employee -->
+      <div class="wizard-panel" data-panel="3">
+
+        <div class="task-block">
+          <div class="task-block-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Главный сотрудник
+          </div>
+          <p class="wz-main-subtitle">Выберите одного ответственного за выполнение задания</p>
+          <div id="wizardMainEmpList" class="select-main-list"></div>
+          <div id="wizardMainEmpError" class="select-main-error"></div>
+        </div>
+
+      </div><!-- /panel 3 -->
+
+      <!-- Panel 4: Photos -->
+      <div class="wizard-panel" data-panel="4">
+
+        <div class="task-block">
+          <div class="task-block-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Фото задания
+          </div>
+          <div class="task-photo-section">
+            <label class="task-photo-add-btn" for="addTaskPhotoInput">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Добавить фото
+            </label>
+            <input id="addTaskPhotoInput" type="file" accept="image/*" multiple hidden>
+            <span class="task-photo-hint">JPEG, PNG · до 3 МБ каждое · необязательно</span>
+          </div>
+          <div id="addTaskPhotoPreviews" class="task-photo-previews"></div>
+        </div>
+
+      </div><!-- /panel 4 -->
+
+    </div>
+
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="cancelTask">Отмена</button>
+      <div class="wz-nav">
+        <button class="task-btn-back wz-hidden" id="wizardBackBtn">Назад</button>
+        <button class="task-btn-next" id="wizardNextBtn">Далее</button>
+        <button class="task-btn-save wz-hidden" id="saveTask">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Сохранить
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="modal-overlay" id="selectMainModal">
+  <div class="modal select-main-modal">
+
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h3 class="task-modal-title">Главный сотрудник</h3>
+    </div>
+
+    <div class="select-main-body">
+      <p class="select-main-subtitle">Выберите одного ответственного за выполнение задания</p>
+      <div id="mainEmployeeList" class="select-main-list"></div>
+      <div id="selectMainError" class="select-main-error"></div>
+    </div>
+
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="cancelMainSelect">Отмена</button>
+      <button class="task-btn-save" id="confirmMainSelect">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Подтвердить
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<aside class="sidebar">
+  <div>
+    <div class="side-head">Админ-панель</div>
+    <nav class="nav">
+      <button class="nav-btn active" data-section="employees">Сотрудники</button>
+      <button class="nav-btn" data-section="tasks">Задания</button>
+      <button class="nav-btn" data-section="salary">Зарплата</button>
+      <button class="nav-btn" data-section="report">Отчёт</button>
+      <button class="nav-btn" data-section="notifications">Уведомления</button>
+      <button class="nav-btn" data-section="notepad">Блокнот</button>
+      <button class="nav-btn" data-section="admin">Администратор</button>
+    </nav>
+  </div>
+  <button class="logout-btn" id="adminLogoutBtn">Выйти</button>
+</aside>
+
+
+<main class="main">
+  <div class="content">
+
+    
+        <section id="employees" class="active">
+      <div class="section-inner">
+      <div class="toolbar">
+        <input id="empSearch" class="input" type="search" placeholder="Поиск по имени или паролю"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+               name="emp-search-field" role="searchbox" aria-label="Поиск сотрудника"
+               data-form-type="other" data-lpignore="true">
+        <div class="sel-wrap" style="width:auto;min-width:130px;">
+          <select class="select" id="empFilter">
+            <option value="all">Все</option>
+            <option value="on">На смене</option>
+            <option value="off">Вне смены</option>
+          </select>
+        </div>
+        <div class="calendar-dropdown">
+          <button class="calendar-toggle" id="calendarToggle">Пн 22 ▼</button>
+          <div class="calendar-menu" id="calendarMenu"></div>
+        </div>
+
+        <div class="spacer"></div>
+        <button id="addEmployeeBtn" class="btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          Добавить
+        </button>
+      </div>
+
+      <div id="employeeCards" class="employee-cards"></div>
+      </div><!-- /section-inner -->
+    </section>
+
+    <section id="tasks">
+      <div class="section-inner">
+      <div class="toolbar">
+        <input id="taskSearch" class="input" type="search" placeholder="Поиск по заданию"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+               name="task-search-field" role="searchbox" aria-label="Поиск задания">
+        <div class="calendar-dropdown" id="taskCalendarDropdown">
+          <button class="calendar-toggle" id="taskCalendarToggle">Пн 22 ▼</button>
+          <div class="calendar-menu" id="taskCalendarMenu"></div>
+        </div>
+        <div class="spacer"></div>
+        <button id="addTaskBtn" class="btn">Добавить задание</button>
+      </div>
+
+      <div id="taskCards" class="task-cards"></div>
+      </div><!-- /section-inner -->
+    </section>
+        <section id="report">
+      <div class="sal-inner section-inner">
+      <div class="toolbar report-toolbar">
+        <div class="sel-wrap">
+          <select id="reportEmployee" class="select">
+            <option value="all">Все сотрудники</option>
+          </select>
+        </div>
+        <div class="calendar-dropdown" id="reportMonthDropdown">
+          <button class="calendar-toggle" id="reportMonthToggle">— ▼</button>
+          <div class="calendar-menu" id="reportMonthMenu"></div>
+        </div>
+        <div class="spacer"></div>
+        <button id="reportPrint" class="btn">Печать</button>
+      </div>
+
+      <div class="sal-summary rep-summary" id="repSummary">
+        <div class="sal-card">
+          <div class="sal-card-val" id="repCardOnShift">—</div>
+          <div class="sal-card-lbl">Дней на смене</div>
+        </div>
+        <div class="sal-card">
+          <div class="sal-card-val" id="repCardOffShift">—</div>
+          <div class="sal-card-lbl">Дней вне смены</div>
+        </div>
+        <div class="sal-card sal-card--good">
+          <div class="sal-card-val" id="repCardWorked">—</div>
+          <div class="sal-card-lbl">Отработано</div>
+        </div>
+        <div class="sal-card sal-card--warn">
+          <div class="sal-card-val" id="repCardUnder">—</div>
+          <div class="sal-card-lbl">Недоработано</div>
+        </div>
+        <div class="sal-card sal-card--accent">
+          <div class="sal-card-val" id="repCardOver">—</div>
+          <div class="sal-card-lbl">Переработано</div>
+        </div>
+        <div class="sal-card sal-card--amber">
+          <div class="sal-card-val" id="repCardAdv">—</div>
+          <div class="sal-card-lbl">Аванс</div>
+        </div>
+        <div class="sal-card">
+          <div class="sal-card-val" id="repCardDone">—</div>
+          <div class="sal-card-lbl">Выполнено задач</div>
+          <div class="sal-card-sub" id="repCardPending"></div>
+        </div>
+      </div>
+
+      <div class="sal-table-wrap">
+        <table id="reportTable">
+          <thead>
+            <tr>
+              <th>Сотрудник</th>
+              <th>Дней на смене</th>
+              <th>Дней вне смены</th>
+              <th>Отработано</th>
+              <th>Недоработано</th>
+              <th>Переработано</th>
+              <th>Аванс</th>
+              <th>Выполнено задач</th>
+              <th>Не выполнено</th>
+              <th>Ср. рейтинг</th>
+              <th style="text-align:right; padding-right:40px;">Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="11" style="text-align:center; color:#999;">Выберите сотрудника и период</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div><!-- /section-inner -->
+    </section>
+
+    <section id="salary">
+      <div class="sal-inner section-inner">
+
+      <!-- Toolbar -->
+      <div class="toolbar sal-toolbar">
+        <div class="sel-wrap">
+          <select id="salEmpSelect" class="select">
+            <option value="">Все сотрудники</option>
+          </select>
+        </div>
+        <div class="calendar-dropdown" id="salMonthDropdown">
+          <button class="calendar-toggle" id="salMonthToggle">— ▼</button>
+          <div class="calendar-menu" id="salMonthMenu"></div>
+        </div>
+        <div class="spacer"></div>
+        <button id="salAdvBtn" class="btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Аванс
+        </button>
+
+        <button id="salSettingsBtn" class="btn" title="Настройка ставки и нормы" aria-label="Настройки">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="sal-summary">
+        <div class="sal-card">
+          <div class="sal-card-val" id="salCardCount">—</div>
+          <div class="sal-card-lbl">Сотрудников</div>
+        </div>
+        <div class="sal-card sal-card--good">
+          <div class="sal-card-val" id="salCardOverAmt">—</div>
+          <div class="sal-card-lbl">Сумма переработки</div>
+        </div>
+        <div class="sal-card sal-card--amber">
+          <div class="sal-card-val" id="salCardAdv">—</div>
+          <div class="sal-card-lbl">Аванс</div>
+        </div>
+        <div class="sal-card">
+          <div class="sal-card-val" id="salCardEarned">—</div>
+          <div class="sal-card-lbl">Зарплата</div>
+        </div>
+        <div class="sal-card sal-card--accent">
+          <div class="sal-card-val" id="salCardBalance">—</div>
+          <div class="sal-card-lbl">Остаток</div>
+        </div>
+      </div>
+
+      <!-- Employee salary table -->
+      <div class="sal-table-toolbar" id="salTableToolbar"></div>
+      <div class="sal-table-wrap">
+        <table class="sal-table">
+          <thead>
+            <tr>
+              <th>Сотрудник</th>
+              <th>Норма, ч</th>
+              <th>Отработано</th>
+              <th>Недоработал, ч</th>
+              <th>Переработка</th>
+              <th>Сумма переработки</th>
+              <th>Ставка/ч</th>
+              <th>Аванс</th>
+              <th>Зарплата</th>
+              <th>Остаток</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="salTableBody">
+            <tr><td colspan="11" class="sal-empty">Загрузка...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      </div><!-- /sal-inner -->
+    </section>
+
+    <section id="notifications">
+      <div class="section-inner">
+        <div class="toolbar">
+          <div class="calendar-dropdown" id="notifCalendarDropdown">
+            <button class="calendar-toggle" id="notifCalendarToggle">— ▼</button>
+            <div class="calendar-menu" id="notifCalendarMenu"></div>
+          </div>
+          <div class="spacer"></div>
+          <button id="notifSettingsBtn" class="btn" title="Настройки уведомлений" aria-label="Настройки">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+        <div id="notificationsList" class="notif-list"></div>
+      </div>
+    </section>
+
+    <!-- Модалка: Настройки уведомлений -->
+    <div class="modal-overlay" id="notifSettingsModal" style="display:none;">
+      <div class="modal task-modal" style="max-width:380px;">
+        <div class="task-modal-header">
+          <div class="task-modal-header-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <h3 class="task-modal-title">Настройки уведомлений</h3>
+          <button class="task-modal-close" id="notifSettingsClose" aria-label="Закрыть">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="task-modal-body">
+          <div class="task-block">
+            <label class="task-block-label" for="notifShiftEnd">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Конец смены
+            </label>
+            <input id="notifShiftEnd" class="task-input" type="time" value="19:20">
+          </div>
+        </div>
+        <div class="task-modal-footer">
+          <button class="task-btn-cancel" id="notifSettingsCancel">Отмена</button>
+          <button class="task-btn-save" id="notifSettingsSave">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Сохранить
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section id="notepad">
+      <div class="np-sidebar">
+        <div class="toolbar" style="margin-bottom:0; border-radius:0; border-left:none; border-top:none; border-right:none;">
+          <span style="font-size:15px; font-weight:600; color:var(--text);">Блокнот</span>
+          <div class="spacer"></div>
+          <button class="btn small" id="npAddBtn">+ Новая</button>
+        </div>
+        <div style="padding:12px 16px; border-bottom:1px solid var(--border);">
+          <input id="npSearch" class="input" type="search" placeholder="Поиск..." autocomplete="off" value="" style="width:100%; box-sizing:border-box; font-size:13px; padding:8px 12px;">
+        </div>
+        <div class="np-list" id="npList"></div>
+      </div>
+      <div class="np-editor">
+        <div class="np-empty" id="npEmpty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Выберите или создайте заметку</span>
+        </div>
+        <div class="np-editor-inner" id="npEditorInner" style="display:none">
+          <div class="toolbar" style="margin-bottom:0; border-radius:0; border-left:none; border-top:none; border-right:none; padding:10px 22px;">
+            <span class="np-date" id="npEditorDate" style="font-size:12px; color:var(--muted);"></span>
+            <div class="spacer"></div>
+            <button class="btn small btn-danger-muted" id="npDelBtn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              Удалить
+            </button>
+          </div>
+          <textarea class="np-textarea" id="npTextarea" placeholder="Начните писать..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section id="admin">
+      <div class="adm-wrap">
+
+        <div class="adm-card">
+          <div class="adm-card-head">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <span>Аккаунт администратора</span>
+          </div>
+          <div class="adm-field">
+            <span class="adm-field-label">Логин</span>
+            <span class="adm-field-val" id="adminLoginDisplay">—</span>
+            <button class="adm-field-btn" id="changeLoginBtn">Изменить</button>
+          </div>
+          <div class="adm-divider"></div>
+          <div class="adm-field">
+            <span class="adm-field-label">Пароль</span>
+            <div class="adm-pwd-wrap">
+              <span class="adm-field-val adm-field-pwd" id="adminPasswordDisplay">—</span>
+              <button class="adm-pwd-toggle" id="adminPwdToggle" title="Показать/скрыть пароль">
+                <svg class="eye-show" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-hide" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <button class="adm-field-btn" id="changePasswordBtn">Изменить</button>
+          </div>
+        </div>
+
+        <div class="adm-card adm-card-online">
+          <div class="adm-online-dot"></div>
+          <div class="adm-online-count" id="adminOnlineCount">0</div>
+          <div class="adm-online-label" id="adminOnlineLabel">пользователей онлайн</div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</main>
+
+
+<!-- Модалка: подтверждение раннего завершения смены -->
+<div class="modal-overlay" id="earlyStopModal" style="display:none;">
+  <div class="modal task-modal" style="max-width:380px;">
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon" style="background:rgba(231,76,60,0.12);border-color:rgba(231,76,60,0.25);color:#e74c3c;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3 class="task-modal-title">Завершить смену?</h3>
+    </div>
+    <div class="task-modal-body" style="padding:16px 22px 8px;">
+      <p id="earlyStopMsg" style="font-size:13px;color:var(--text);line-height:1.5;margin:0;"></p>
+    </div>
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="earlyStopCancel">Отмена</button>
+      <button class="task-btn-save" id="earlyStopOk" style="background:#c0392b;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Завершить
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка: Смены по дням сотрудника -->
+<div class="modal-overlay" id="shiftDaysModal" style="display:none;">
+  <div class="modal task-modal sdm-modal">
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="sdm-title-wrap">
+        <h3 class="task-modal-title" id="shiftDaysModalTitle">Смены сотрудника</h3>
+        <div class="sdm-title-sub" id="shiftDaysModalSub"></div>
+      </div>
+      <button class="task-modal-close" id="shiftDaysModalClose" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="task-modal-body" id="shiftDaysModalBody" style="padding:0; max-height:65vh; overflow-y:auto;"></div>
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="shiftDaysModalCancel">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="tasksModal">
+  <div class="modal large ti-modal">
+    <div class="ti-modal-head">
+      <h3 id="tasksModalTitle" class="ti-modal-title"></h3>
+      <select id="tiDaySelect" class="ti-day-select" style="display:none"></select>
+      <button class="task-modal-close" id="closeTasksModal" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="tasksList" class="tasks-list"></div>
+    <div class="ti-modal-foot">
+      <button class="task-btn-cancel" id="closeTasksModalFoot">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal-overlay" id="editTaskModal">
+  <div class="modal large task-modal">
+
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <h3 class="task-modal-title">Редактировать задание</h3>
+      <button class="task-modal-close" id="closeEditTaskBtn" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="wizard-steps" id="editTaskWizardSteps">
+      <div class="wz-step active" data-step="1">
+        <div class="wz-dot">1</div>
+        <span class="wz-label">Основное</span>
+      </div>
+      <div class="wz-connector"></div>
+      <div class="wz-step" data-step="2">
+        <div class="wz-dot">2</div>
+        <span class="wz-label">Сотрудники</span>
+      </div>
+      <div class="wz-connector"></div>
+      <div class="wz-step" data-step="3">
+        <div class="wz-dot">3</div>
+        <span class="wz-label">Главный</span>
+      </div>
+      <div class="wz-connector"></div>
+      <div class="wz-step" data-step="4">
+        <div class="wz-dot">4</div>
+        <span class="wz-label">Фото</span>
+      </div>
+    </div>
+
+    <div class="task-modal-body">
+
+      <!-- Panel 1: Дата / Время / Заголовок / Описание -->
+      <div class="wizard-panel active" data-panel="1">
+
+        <div class="task-block">
+          <div class="task-block-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Дата
+          </div>
+          <div class="task-date-row">
+            <span id="editTaskMonthLabel" class="task-month-badge"></span>
+            <select id="editTaskDay" class="task-select"></select>
+          </div>
+          <div class="tp-block">
+            <div class="tp-top-row">
+              <span class="tp-label">Время работы</span>
+              <button type="button" class="tp-no-time-btn" id="editTaskNoTimeBtn">Без времени</button>
+            </div>
+            <div id="editTaskTimeFields" class="tp-fields">
+              <div class="tp-inputs-row">
+                <input id="editTaskTimeFrom" type="time" class="tp-input">
+                <span class="tp-sep">—</span>
+                <input id="editTaskDueTime" type="time" class="tp-input">
+                <span class="tp-duration" id="editTaskDuration"></span>
+              </div>
+              <div class="tp-presets">
+                <button type="button" class="tp-preset" data-hours="1">+1ч</button>
+                <button type="button" class="tp-preset" data-hours="2">+2ч</button>
+                <button type="button" class="tp-preset" data-hours="4">+4ч</button>
+              </div>
+              <div class="tp-error" id="editTaskTimeError"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="task-modal-divider"></div>
+
+        <div class="task-block">
+          <label class="task-block-label" for="editTaskTitle">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Заголовок
+          </label>
+          <input id="editTaskTitle" class="task-input" type="text" placeholder="Введите заголовок задания">
+          <div class="task-field-error" id="editTaskTitleError"></div>
+        </div>
+
+        <div class="task-block">
+          <label class="task-block-label" for="editTaskDesc">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+            Описание
+          </label>
+          <textarea id="editTaskDesc" class="task-textarea" placeholder="Подробное описание задания..."></textarea>
+        </div>
+
+      </div><!-- /panel 1 -->
+
+      <!-- Panel 2: Сотрудники -->
+      <div class="wizard-panel" data-panel="2">
+
+        <div class="task-block">
+          <div class="task-block-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Сотрудники
+          </div>
+          <div class="task-emp-search-wrap">
+            <svg class="task-emp-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" class="task-emp-search" id="editTaskEmpSearch" placeholder="Поиск по имени..."
+                   autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                   name="edit-emp-filter" role="searchbox" aria-label="Фильтр сотрудников">
+          </div>
+          <div id="editEmployeeCheckboxes" class="task-checkbox-grid"></div>
+          <div class="task-field-error" id="editTaskEmpError"></div>
+        </div>
+
+      </div><!-- /panel 2 -->
+
+      <!-- Panel 3: Главный сотрудник -->
+      <div class="wizard-panel" data-panel="3">
+
+        <div class="task-block">
+          <div class="task-block-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Главный сотрудник
+          </div>
+          <p class="wz-main-subtitle">Выберите одного ответственного за выполнение задания</p>
+          <div id="editWizardMainEmpList" class="select-main-list"></div>
+          <div id="editWizardMainEmpError" class="select-main-error"></div>
+        </div>
+
+      </div><!-- /panel 3 -->
+
+      <!-- Panel 4: Фото -->
+      <div class="wizard-panel" data-panel="4">
+
+        <div class="task-block">
+          <div class="task-block-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Фото задания
+          </div>
+          <div class="task-photo-section">
+            <label class="task-photo-add-btn" for="editTaskPhotoInput">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Добавить фото
+            </label>
+            <input id="editTaskPhotoInput" type="file" accept="image/*" multiple hidden>
+            <span class="task-photo-hint">JPEG, PNG · до 3 МБ каждое</span>
+          </div>
+          <div id="editTaskPhotoPreviews" class="task-photo-previews"></div>
+        </div>
+
+      </div><!-- /panel 4 -->
+
+    </div>
+
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="cancelEditTask">Отмена</button>
+      <div class="wz-nav">
+        <button class="task-btn-back wz-hidden" id="editWizardBackBtn">Назад</button>
+        <button class="task-btn-next" id="editWizardNextBtn">Далее</button>
+        <button class="task-btn-save wz-hidden" id="saveEditTask">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Сохранить
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Модалка: профиль сотрудника (только просмотр) -->
+<div class="modal-overlay" id="empProfileModal">
+  <div class="modal emp-profile-modal">
+
+    <!-- Шапка -->
+    <div class="epm-header">
+      <span class="epm-header-title">Профиль сотрудника</span>
+      <div class="epm-header-actions">
+        <button class="epm-edit-btn" id="empProfileEditBtn" title="Изменить" aria-label="Изменить">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="epm-del-btn" id="empProfileDeleteBtn" title="Удалить" aria-label="Удалить">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+        <button class="emp-profile-close" id="empProfileClose" aria-label="Закрыть">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Аватар + имя + статус -->
+    <div class="epm-top">
+      <div class="epm-avatar-wrap">
+        <img class="emp-profile-avatar" id="empProfileAvatar" src="" alt="">
+      </div>
+      <div class="epm-top-info">
+        <div class="epm-name-row">
+          <div class="emp-profile-name" id="empProfileName"></div>
+          <div id="empProfileRating"></div>
+        </div>
+        <span class="emp-profile-status" id="empProfileStatus"></span>
+      </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="emp-profile-stats">
+      <div class="emp-profile-stat">
+        <span class="eps-value" id="empProfileActive">—</span>
+        <span class="eps-label">В работе</span>
+      </div>
+      <div class="emp-profile-stat-divider"></div>
+      <div class="emp-profile-stat">
+        <span class="eps-value eps-done" id="empProfileDone">—</span>
+        <span class="eps-label">Выполнено</span>
+      </div>
+    </div>
+
+    <!-- Время смены -->
+    <div class="epm-shift-times">
+      <div class="epm-shift-time-row">
+        <span class="epm-st-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Начало смены
+        </span>
+        <span class="epm-st-value" id="empProfileShiftStart">—</span>
+      </div>
+      <div class="epm-shift-time-divider"></div>
+      <div class="epm-shift-time-row">
+        <span class="epm-st-label">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/></svg>
+          Конец смены
+        </span>
+        <span class="epm-st-value" id="empProfileShiftEnd">—</span>
+      </div>
+    </div>
+
+    <!-- Кнопки действий -->
+    <div class="epm-actions">
+      <button class="epm-btn epm-btn-shift" id="empProfileShiftBtn"></button>
+      <button class="epm-btn epm-btn-tasks" id="empProfileTasksBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="15" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/></svg>
+        Задания
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Модалка: редактирование сотрудника -->
+<div class="modal-overlay" id="empEditModal">
+  <div class="modal emp-edit-modal">
+
+    <div class="eem-header">
+      <span class="eem-header-title">Редактировать сотрудника</span>
+      <button class="emp-profile-close" id="empEditClose" aria-label="Закрыть">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Фото -->
+    <div class="eem-photo-section">
+      <label class="eem-avatar-label" for="empEditPhotoInput" title="Изменить фото">
+        <img class="eem-avatar-preview" id="empEditAvatarPreview" src="" alt="">
+        <span class="eem-avatar-overlay">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </span>
+      </label>
+      <input id="empEditPhotoInput" type="file" accept="image/*" hidden>
+      <span class="eem-photo-hint">Нажмите для смены фото</span>
+    </div>
+
+    <!-- Имя -->
+    <div class="eem-field">
+      <label class="eem-label" for="empEditNameInput">Имя сотрудника</label>
+      <input class="eem-input" id="empEditNameInput" type="text" placeholder="Введите имя">
+    </div>
+
+    <!-- Пароль -->
+    <div class="eem-field">
+      <label class="eem-label" for="empEditPasswordInput">Пароль</label>
+      <div class="eem-input-wrap">
+        <input class="eem-input" id="empEditPasswordInput" type="password" placeholder="Пароль сотрудника" inputmode="numeric">
+        <button type="button" class="eem-eye-btn" id="empEditPasswordToggle" tabindex="-1" aria-label="Показать/скрыть пароль">
+          <svg id="empEditEyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <p class="task-field-error" id="editEmpPwdError"></p>
+    </div>
+
+    <div class="eem-error" id="empEditError"></div>
+
+    <!-- Действия -->
+    <div class="eem-actions">
+      <button class="eem-btn-cancel" id="empEditCancel">Отмена</button>
+      <button class="eem-btn-save" id="empEditSave">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Сохранить
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Модалка: изменить логин -->
+<div class="modal-overlay" id="changeLoginModal">
+  <div class="modal adm-edit-modal">
+    <div class="adm-edit-head">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      <span>Изменить логин</span>
+    </div>
+    <label class="adm-edit-label">Новый логин</label>
+    <input id="newLoginInput" class="adm-edit-input" type="text" placeholder="Введите новый логин" autocomplete="off">
+    <div class="adm-edit-error" id="changeLoginError"></div>
+    <div class="adm-edit-actions">
+      <button class="task-btn-cancel" id="changeLoginCancel">Отмена</button>
+      <button class="adm-edit-save" id="changeLoginSave">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка: изменить пароль -->
+<div class="modal-overlay" id="changePasswordModal">
+  <div class="modal adm-edit-modal">
+    <div class="adm-edit-head">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>Изменить пароль</span>
+    </div>
+    <label class="adm-edit-label">Новый пароль</label>
+    <input id="newPasswordInput" class="adm-edit-input" type="text" placeholder="Введите новый пароль" autocomplete="off">
+    <div class="adm-edit-error" id="changePasswordError"></div>
+    <div class="adm-edit-actions">
+      <button class="task-btn-cancel" id="changePasswordCancel">Отмена</button>
+      <button class="adm-edit-save" id="changePasswordSave">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка «Выдать аванс» -->
+<!-- Модалка «Ставка и норма часов» -->
+<div class="modal-overlay" id="salRateModal">
+  <div class="modal task-modal sal-modal">
+    <div class="task-modal-header" style="position:relative">
+      <div class="task-modal-header-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <h3 class="task-modal-title">Зарплата сотрудника</h3>
+      <button class="task-modal-close" id="salRateClose" aria-label="Закрыть" style="position:absolute;top:12px;right:12px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="task-modal-body">
+      <div class="task-block">
+        <label class="task-block-label" for="salRateEmpSel">Сотрудник</label>
+        <select id="salRateEmpSel" class="task-select" style="width:100%"></select>
+        <div class="task-field-error" id="salRateEmpErr"></div>
+      </div>
+      <div class="task-block">
+        <label class="task-block-label" for="salSalaryInput">Зарплата за месяц (TJS)</label>
+        <input id="salSalaryInput" class="task-input" type="number" min="0" step="1" placeholder="Например, 3000">
+        <div class="task-field-error" id="salRateSalErr"></div>
+      </div>
+    </div>
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="salRateCancelBtn">Отмена</button>
+      <button class="task-btn-save" id="salRateSaveBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Сохранить
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка «Аванс» -->
+<div class="modal-overlay" id="salAdvModal">
+  <div class="modal task-modal sal-modal">
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3 class="task-modal-title">Выдать аванс</h3>
+      <button class="task-modal-close" id="salAdvClose" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="task-modal-body">
+      <div class="task-block">
+        <label class="task-block-label" for="salAdvEmpSel">Сотрудник</label>
+        <select id="salAdvEmpSel" class="task-select" style="width:100%"></select>
+        <div class="task-field-error" id="salAdvEmpErr"></div>
+      </div>
+      <div class="task-block">
+        <label class="task-block-label" for="salAdvDate">Дата</label>
+        <input id="salAdvDate" class="task-input" type="date">
+      </div>
+      <div class="task-block">
+        <label class="task-block-label" for="salAdvAmount">Сумма аванса (TJS)</label>
+        <input id="salAdvAmount" class="task-input" type="number" min="1" placeholder="0">
+        <div class="task-field-error" id="salAdvAmtErr"></div>
+      </div>
+      <div class="task-block">
+        <label class="task-block-label" for="salAdvComment">Комментарий</label>
+        <input id="salAdvComment" class="task-input" type="text" placeholder="Необязательно">
+      </div>
+    </div>
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="salAdvCancelBtn">Отмена</button>
+      <button class="task-btn-save" id="salAdvSaveBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Сохранить
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Модалка «История выплат» -->
+<div class="modal-overlay" id="salHistModal">
+  <div class="modal task-modal sal-modal sal-hist-modal">
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/></svg>
+      </div>
+      <div style="flex:1">
+        <h3 class="task-modal-title">История авансов</h3>
+        <div class="sal-modal-sub" id="salHistEmpName"></div>
+      </div>
+      <button class="task-modal-close" id="salHistClose" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="task-modal-body sal-hist-body">
+      <table class="sal-table sal-hist-table">
+        <thead>
+          <tr>
+            <th>Дата</th>
+            <th>Сумма</th>
+            <th>Комментарий</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody id="salHistBody">
+          <tr><td colspan="4" class="sal-empty">Нет записей</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="salHistCloseFoot">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка «Редактировать выплату/аванс» -->
+<div class="modal-overlay" id="salHistEditModal">
+  <div class="modal task-modal sal-modal">
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <h3 class="task-modal-title" id="salHistEditTitle">Редактировать</h3>
+      <button class="task-modal-close" id="salHistEditClose" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="task-modal-body">
+      <div class="task-block">
+        <label class="task-block-label" for="salHistEditAmount">Сумма (TJS)</label>
+        <input type="number" id="salHistEditAmount" class="task-input" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="task-block">
+        <label class="task-block-label" for="salHistEditComment">Комментарий</label>
+        <input type="text" id="salHistEditComment" class="task-input" placeholder="Необязательно">
+      </div>
+    </div>
+    <div class="task-modal-footer">
+      <button class="task-btn-cancel" id="salHistEditCancel">Отмена</button>
+      <button class="task-btn-save" id="salHistEditSave">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Сохранить
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка: комментарии к заданию -->
+<div class="modal-overlay" id="taskCommentsModal">
+  <div class="modal tc-chat-modal">
+    <div class="task-modal-header">
+      <div class="task-modal-header-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <h3 class="task-modal-title">Комментарии к заданию</h3>
+      <button class="task-modal-close" id="closeTaskCommentsBtn" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="taskCommentsList" class="tc-chat-messages"></div>
+    <div class="tc-chat-input-wrap">
+      <input type="file" id="tcPhotoFileInput" accept="image/*" hidden>
+      <label for="tcPhotoFileInput" id="tcChatPhotoBtnLabel" class="tc-chat-photo-btn" title="Прикрепить фото" aria-label="Прикрепить фото">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </label>
+      <textarea id="taskCommentText" class="tc-chat-input" placeholder="Написать комментарий…" rows="1"></textarea>
+      <button class="tc-chat-send-btn" id="addTaskCommentBtn" aria-label="Отправить">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Кастомная модалка подтверждения удаления -->
+<div class="modal-overlay" id="confirmDeleteModal">
+  <div class="modal confirm-del-modal">
+    <div class="confirm-del-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+    </div>
+    <h3 class="confirm-del-title">Удалить задание?</h3>
+    <p class="confirm-del-text">Это действие нельзя отменить. Задание будет удалено безвозвратно.</p>
+    <div class="confirm-del-actions">
+      <button class="task-btn-cancel" id="confirmDelCancel">Отмена</button>
+      <button class="confirm-del-btn" id="confirmDelOk">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        <span id="confirmDelOkLabel">Удалить</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function checkAdminAuth() {
+    const token = localStorage.getItem("adminToken");
+
+    // Немедленный редирект если токена нет вообще
+    if (!token || token === "null" || token === "undefined" || token === "") {
+      localStorage.removeItem("adminToken");
+      window.location.replace("./admin-login.html");
+      return;
+    }
+
+    // Фоновая проверка токена на сервере
+    fetch("http://localhost:3000/api/admin/verify", {
+      headers: { "x-admin-token": token }
+    }).then(res => {
+      if (!res.ok) {
+        localStorage.removeItem("adminToken");
+        window.location.replace("./admin-login.html");
+      }
+    }).catch(() => {
+      // Сервер недоступен — разрешаем работу (токен есть локально)
+    });
+  })();
+
+  const logoutBtn = document.getElementById("adminLogoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("adminToken");
+      window.location.href = "./admin-login.html";
+    });
+  }
+</script>
+<!-- Модалка: галерея фото задания -->
+<div class="modal-overlay" id="taskPhotosModal">
+  <div class="modal tp-modal">
+    <div class="tp-modal-header">
+      <span class="tp-modal-title">Фото задания</span>
+      <button class="emp-profile-close" id="taskPhotosModalClose" aria-label="Закрыть">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="taskPhotosContent" class="tp-modal-body"></div>
+    <div class="tp-modal-footer">
+      <button class="task-btn-cancel" id="taskPhotosModalCloseBtn">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка: детали задания -->
+<div class="modal-overlay" id="taskDetailModal" style="display:none">
+  <div class="modal tdm-modal">
+    <div class="tdm-header">
+      <span class="tdm-title" id="tdmTitle"></span>
+      <button class="emp-profile-close" id="tdmClose" aria-label="Закрыть">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="tdm-body" id="tdmBody"></div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="photoLightbox" class="photo-lightbox" style="display:none">
+  <div class="plb-backdrop"></div>
+  <button class="plb-close" id="plbClose" aria-label="Закрыть">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <button class="plb-prev" id="plbPrev" aria-label="Назад">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <img class="plb-img" id="plbImg" src="" alt="">
+  <button class="plb-next" id="plbNext" aria-label="Вперёд">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</div>
+
+<script src="./admin.js"></script>
+
+<!-- ═══════════════════ МОБИЛЬНАЯ НАВИГАЦИЯ ═══════════════════ -->
+<script>
+(function () {
+  var burger   = document.getElementById('mobBurger');
+  var overlay  = document.getElementById('mobOverlay');
+  var mobLogout = document.getElementById('mobLogoutBtn');
+  var mobTitle = document.getElementById('mobTitle');
+
+  var SECTION_NAMES = {
+    employees:     'Сотрудники',
+    tasks:         'Задания',
+    salary:        'Зарплата',
+    report:        'Отчёт',
+    notifications: 'Уведомления',
+    notepad:       'Блокнот',
+    admin:         'Администратор'
+  };
+
+  function openNav()  { document.body.classList.add('mob-nav-open'); }
+  function closeNav() { document.body.classList.remove('mob-nav-open'); }
+
+  if (burger)  burger.addEventListener('click', openNav);
+  if (overlay) overlay.addEventListener('click', closeNav);
+
+  // Закрывать меню при выборе пункта навигации + обновлять заголовок
+  document.querySelectorAll('.nav-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var section = btn.getAttribute('data-section');
+      if (section && SECTION_NAMES[section] && mobTitle) {
+        mobTitle.textContent = SECTION_NAMES[section];
+      }
+      closeNav();
+    });
+  });
+
+  // Мобильный выход
+  if (mobLogout) {
+    mobLogout.addEventListener('click', function () {
+      localStorage.removeItem('adminToken');
+      window.location.href = './admin-login.html';
+    });
+  }
+
+  // Установить начальный заголовок
+  var activeBtn = document.querySelector('.nav-btn.active');
+  if (activeBtn && mobTitle) {
+    var s = activeBtn.getAttribute('data-section');
+    if (s && SECTION_NAMES[s]) mobTitle.textContent = SECTION_NAMES[s];
+  }
+})();
+</script>
+</body>
+</html>
+
+
+

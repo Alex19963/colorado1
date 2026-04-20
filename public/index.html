@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Colorado — Вход</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e1117">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="login-wrap">
+    <div class="login-card">
+      <h1 class="app-title">Colorado</h1>
+      <p class="subtitle">Вход сотрудника</p>
+
+      <div class="form-group">
+        <input id="empPassword" type="password" class="input" placeholder="Пароль сотрудника" autofocus>
+        <p id="errorMsg" class="error-msg"></p>
+      </div>
+
+      <button id="loginBtn" class="btn primary">Войти</button>
+    </div>
+  </main>
+
+<script>
+  const API = "http://localhost:3000";
+
+  const loginBtn = document.getElementById('loginBtn');
+  const empPassword = document.getElementById('empPassword');
+  const errorMsg = document.getElementById('errorMsg');
+  const loginCard = document.querySelector('.login-card');
+
+  function setError(msg) {
+    errorMsg.textContent = msg;
+    loginCard.classList.toggle('has-error', !!msg);
+  }
+
+  loginBtn.onclick = async () => {
+    const pwd = empPassword.value.trim();
+    if (!pwd) {
+      setError('Введите пароль');
+      return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Вход…';
+
+    try {
+      const res = await fetch(API + "/api/employees/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: pwd })
+      });
+
+      if (res.status === 401) {
+        setError('Неверный пароль');
+        return;
+      }
+      if (!res.ok) {
+        setError('Ошибка сервера (' + res.status + ')');
+        return;
+      }
+
+      const user = await res.json();
+      localStorage.setItem("employee", JSON.stringify(user));
+      location.href = "./employee.html";
+    } catch {
+      setError('Нет соединения с сервером');
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Войти';
+    }
+  };
+
+  empPassword.addEventListener('input', () => {
+    if (errorMsg.textContent) setError('');
+  });
+
+  empPassword.addEventListener('keydown', e => {
+    if (e.key === 'Enter') loginBtn.click();
+  });
+</script>
+
+</body>
+</html>

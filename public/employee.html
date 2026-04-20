@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Colorado — Кабинет сотрудника</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e1117">
+  <style>
+    :root {
+      --bg:          #0e1117;
+      --panel:       #11151c;
+      --text:        #e5e9f0;
+      --muted:       #9aa0ac;
+      --accent:      #4ea6ff;
+      --border:      #1f2530;
+      --danger:      #ff5d5d;
+      --card-border: #1a2030;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter","Segoe UI",Arial,sans-serif;
+      font-size: 15px;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════ HEADER ═══════════════ */
+    .emp-header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+      min-height: 62px;
+    }
+
+    /* Mobile: header-inner is the flex row */
+    .emp-header-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      min-height: 62px;
+    }
+
+    .emp-name-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Sub-label hidden on mobile */
+    .emp-name-sub { display: none; }
+
+    .emp-avatar {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(78,166,255,.13);
+      border: 1.5px solid rgba(78,166,255,.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .emp-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .emp-logout-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: inherit;
+      padding: 7px 12px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s;
+      white-space: nowrap;
+      min-height: 36px;
+    }
+    .emp-logout-btn:hover { color: var(--danger); border-color: rgba(255,93,93,.45); background: rgba(255,93,93,.07); }
+
+    /* ═══════════════ CONTENT ═══════════════ */
+    .emp-content {
+      padding: 16px 14px 56px;
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ═══════════════ SHIFT CARD ═══════════════ */
+    .shift-card {
+      background: var(--panel);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+
+    .shift-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .shift-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .shift-badge {
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .shift-badge.on      { color: #6de0a8; background: rgba(109,224,168,.12); border-color: rgba(109,224,168,.35); }
+    .shift-badge.off     { color: #ffcf6b; background: rgba(255,207,107,.12); border-color: rgba(255,207,107,.35); }
+    .shift-badge.loading { color: var(--muted); background: rgba(154,160,172,.1); border-color: rgba(154,160,172,.25); }
+
+    .shift-card-body { padding: 14px; }
+
+    .btn-shift {
+      display: block;
+      width: 100%;
+      padding: 13px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, transform .1s;
+      text-align: center;
+      min-height: 48px;
+    }
+    .btn-shift.start { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+    .btn-shift.start:hover  { background: #6eb7ff; border-color: #6eb7ff; }
+    .btn-shift.start:active { transform: scale(.98); }
+    .btn-shift.stop  { background: rgba(255,93,93,.08); color: var(--danger); border: 1px solid rgba(255,93,93,.35); }
+    .btn-shift.stop:hover  { background: rgba(255,93,93,.15); border-color: rgba(255,93,93,.55); }
+    .btn-shift.stop:active { transform: scale(.98); }
+
+    /* ═══════════════ TASKS BLOCK ═══════════════ */
+    #tasksBlock         { display: none; }
+    #tasksBlock.visible { display: block; }
+
+    .tasks-heading {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 10px 2px;
+    }
+
+    /* ═══════════════ TASK CARD ═══════════════ */
+    .task-card {
+      background: var(--panel);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .task-card:hover    { border-color: #252f42; box-shadow: 0 4px 20px rgba(0,0,0,.3); }
+    .task-card.tc--done { border-color: rgba(78,200,140,.18); }
+
+    .tc-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px 10px;
+    }
+
+    .tc-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+      word-break: break-word;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tc-status {
+      flex-shrink: 0;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .tc-status.in-progress { color: #ffcf6b; background: rgba(255,207,107,.12); border-color: rgba(255,207,107,.35); }
+    .tc-status.done        { color: #6de0a8; background: rgba(109,224,168,.12); border-color: rgba(109,224,168,.35); }
+
+    .tc-body {
+      border-top: 1px solid var(--card-border);
+      padding: 10px 14px 12px;
+    }
+
+    .tc-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .tc-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    /* Comments */
+    .tc-comments {
+      border-top: 1px solid var(--card-border);
+      padding: 10px 14px 12px;
+    }
+
+    .tc-comment-item {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .tc-comment-item:last-child { margin-bottom: 0; }
+
+    /* Сообщения текущего сотрудника — справа */
+    .tc-comment-item.own {
+      flex-direction: row-reverse;
+    }
+    .tc-comment-item.own .tc-comment-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .tc-comment-item.own .tc-comment-author-row {
+      flex-direction: row-reverse;
+    }
+
+    .tc-comment-dot {
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 5px;
+    }
+    .tc-comment-dot.own   { background: rgba(78,166,255,.7); }
+    .tc-comment-dot.other { background: rgba(154,160,172,.45); }
+
+    .tc-comment-inner { flex: 1; min-width: 0; }
+
+    .tc-comment-author-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .tc-comment-author {
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tc-comment-author.own   { color: var(--accent); }
+    .tc-comment-author.other { color: var(--muted); }
+
+    /* Edit / delete actions on own comments */
+    .tc-cmt-actions {
+      display: flex;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .tc-cmt-action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 11px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      line-height: 1;
+      min-height: 22px;
+      transition: color .15s, background .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tc-cmt-action-btn:hover { color: var(--accent); background: rgba(78,166,255,.1); }
+    .tc-cmt-del-btn:hover    { color: var(--danger);  background: rgba(255,93,93,.1); }
+
+    /* Inline edit form */
+    .tc-cmt-edit-form { margin-top: 4px; }
+    .tc-cmt-edit-ta {
+      display: block;
+      width: 100%;
+      background: #0c0f15;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      padding: 8px 10px;
+      resize: none;
+      outline: none;
+      transition: border .2s, box-shadow .2s;
+    }
+    .tc-cmt-edit-ta:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(78,166,255,.18);
+    }
+    .tc-cmt-edit-actions {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+      margin-top: 6px;
+    }
+    .tc-cmt-edit-cancel {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 5px 12px;
+      cursor: pointer;
+      min-height: 30px;
+    }
+    .tc-cmt-edit-save {
+      background: rgba(78,166,255,.12);
+      border: 1px solid rgba(78,166,255,.3);
+      border-radius: 5px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 5px 14px;
+      cursor: pointer;
+      min-height: 30px;
+    }
+
+    .tc-comment-text {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    /* Photos */
+    .tc-photos {
+      border-top: 1px solid var(--card-border);
+      padding: 10px 14px 12px;
+    }
+
+    .tc-photo-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 6px;
+    }
+
+    .tc-photo-thumb {
+      position: relative;
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: border-color .18s, transform .15s;
+      background: #0c0f15;
+    }
+    .tc-photo-thumb:hover  { border-color: var(--accent); transform: translateY(-1px); }
+    .tc-photo-thumb:active { transform: scale(.96); }
+    .tc-photo-thumb img    { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* Delete button on own photos */
+    .tc-photo-del-btn {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0,0,0,.6);
+      border: 1px solid rgba(255,255,255,.15);
+      color: #fff;
+      font-size: 12px;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tc-photo-del-btn:hover { background: rgba(200,40,40,.8); }
+
+    /* Complete task button — только для главного сотрудника */
+    .tc-complete-wrap {
+      border-top: 1px solid var(--card-border);
+      padding: 10px 14px 12px;
+    }
+    .tc-dates-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-end;
+      padding: 6px 14px 8px;
+      border-top: 1px solid var(--card-border);
+    }
+    .tc-dates-row {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .tc-dates-lbl {
+      font-size: 10px;
+      color: var(--muted, #6b7a99);
+      white-space: nowrap;
+    }
+    .tc-dates-val {
+      font-size: 10px;
+      font-weight: 600;
+      color: #8899bb;
+      white-space: nowrap;
+    }
+
+    .btn-complete-task {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      padding: 11px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      min-height: 44px;
+      transition: background .2s, border-color .2s, transform .1s;
+      background: rgba(109,224,168,.08);
+      border: 1px solid rgba(109,224,168,.3);
+      color: #6de0a8;
+    }
+    .btn-complete-task:hover  { background: rgba(109,224,168,.16); border-color: rgba(109,224,168,.5); }
+    .btn-complete-task:active { transform: scale(.98); }
+    .btn-complete-task:disabled { opacity: .4; cursor: default; pointer-events: none; }
+
+    /* Состояние "отменить выполнение" */
+    .btn-complete-task.cancel {
+      background: rgba(255,207,107,.08);
+      border-color: rgba(255,207,107,.3);
+      color: #ffcf6b;
+    }
+    .btn-complete-task.cancel:hover { background: rgba(255,207,107,.16); border-color: rgba(255,207,107,.5); }
+
+    /* Action buttons */
+    .tc-actions {
+      border-top: 1px solid var(--card-border);
+      padding: 10px 14px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .tc-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 7px 12px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s;
+      min-height: 34px;
+      white-space: nowrap;
+    }
+    .tc-action-btn:hover  { color: var(--accent); border-color: rgba(78,166,255,.4); background: rgba(78,166,255,.07); }
+    .tc-action-btn:active { opacity: .75; }
+
+    /* Discussion block (comments + photos + form) */
+    .tc-discussion        { display: none; }
+    .tc-discussion.open   { display: block; }
+
+    /* Comment form — always visible inside open discussion */
+    .tc-comment-form {
+      border-top: 1px solid var(--card-border);
+      padding: 10px 14px 12px;
+    }
+
+    /* Count badge on comment button */
+    .tc-cmt-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 999px;
+      background: rgba(78,166,255,.18);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 0 4px;
+      margin-left: 2px;
+    }
+
+    .tc-comment-textarea {
+      display: block;
+      width: 100%;
+      background: #0c0f15;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      padding: 10px 12px;
+      resize: none;
+      min-height: 72px;
+      transition: border .2s, box-shadow .2s;
+      outline: none;
+    }
+    .tc-comment-textarea::placeholder { color: #333d50; }
+    .tc-comment-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(78,166,255,.2);
+    }
+
+    .tc-comment-form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tc-form-actions-right {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tc-form-btn-photo-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 7px 12px;
+      cursor: pointer;
+      min-height: 34px;
+      white-space: nowrap;
+      transition: color .2s, border-color .2s, background .2s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .tc-form-btn-photo-label:hover  { color: var(--accent); border-color: rgba(78,166,255,.4); background: rgba(78,166,255,.07); }
+    .tc-form-btn-photo-label:active { opacity: .75; }
+
+    .tc-form-btn-cancel {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 7px 14px;
+      cursor: pointer;
+      min-height: 34px;
+      transition: color .2s, border-color .2s;
+    }
+    .tc-form-btn-cancel:hover { color: var(--text); border-color: #555; }
+
+    .tc-form-btn-send {
+      background: rgba(78,166,255,.12);
+      border: 1px solid rgba(78,166,255,.3);
+      border-radius: 6px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 7px 16px;
+      cursor: pointer;
+      min-height: 34px;
+      transition: background .2s, border-color .2s;
+    }
+    .tc-form-btn-send:hover    { background: rgba(78,166,255,.2); border-color: rgba(78,166,255,.5); }
+    .tc-form-btn-send:disabled { opacity: .45; cursor: default; }
+
+    /* Photo upload spinner */
+    .tc-photo-uploading {
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
+      border: 1px dashed rgba(78,166,255,.3);
+      background: rgba(78,166,255,.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .tc-photo-uploading-spinner {
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(78,166,255,.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Empty */
+    .tasks-empty {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--muted);
+      font-size: 13px;
+      background: var(--panel);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+    }
+
+    /* ═══════════════ LIGHTBOX ═══════════════ */
+    #photoLightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.9);
+      z-index: 9000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #photoLightbox.open { display: flex; }
+
+    .lb-img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 8px;
+      object-fit: contain;
+      display: block;
+      box-shadow: 0 10px 40px rgba(0,0,0,.6);
+    }
+
+    .lb-close {
+      position: absolute;
+      top: 14px; right: 16px;
+      width: 36px; height: 36px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+    .lb-close:hover { background: rgba(255,255,255,.15); }
+
+    /* ═══════════════ CONFIRM MODAL ═══════════════ */
+    #empConfirmModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #empConfirmModal.open { display: flex; }
+
+    /* ═══════════════ EARLY STOP MODAL ═══════════════ */
+    #earlyStopOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #earlyStopOverlay.open { display: flex; }
+
+    .es-modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 26px 24px 20px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+      animation: fadeIn .2s;
+    }
+    @keyframes fadeIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+
+    .es-title { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: var(--text); }
+    .es-msg   { margin: 0 0 20px; font-size: 13px; color: var(--muted); line-height: 1.55; }
+    .es-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+    .es-btn-cancel {
+      background: transparent; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); font-size: 13px; font-weight: 600; font-family: inherit;
+      padding: 9px 16px; cursor: pointer; min-height: 38px;
+      transition: color .2s, border-color .2s;
+    }
+    .es-btn-cancel:hover { color: var(--text); border-color: #555; }
+
+    .es-btn-confirm {
+      background: rgba(255,93,93,.1); border: 1px solid rgba(255,93,93,.35); border-radius: 6px;
+      color: var(--danger); font-size: 13px; font-weight: 700; font-family: inherit;
+      padding: 9px 16px; cursor: pointer; min-height: 38px;
+      transition: background .2s, border-color .2s;
+    }
+    .es-btn-confirm:hover { background: rgba(255,93,93,.2); border-color: rgba(255,93,93,.55); }
+
+    /* ═══════════════ TASK DETAIL MODAL ═══════════════ */
+    #empTaskDetailModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #empTaskDetailModal.open { display: flex; }
+    .etdm-modal {
+      background: #11151c;
+      border: 1px solid #1f2530;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 460px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .etdm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid #1a2030;
+    }
+    .etdm-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #e5e9f0;
+      line-height: 1.3;
+    }
+    .etdm-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6b7a99;
+      padding: 4px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      transition: color .15s;
+    }
+    .etdm-close:hover { color: #e5e9f0; }
+    .etdm-body {
+      padding: 16px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .etdm-section { display: flex; flex-direction: column; gap: 6px; }
+    .etdm-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #6b7a99;
+    }
+    .etdm-status {
+      display: inline-flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      width: fit-content;
+    }
+    .etdm-status--done       { background: rgba(109,224,168,.12); color: #6de0a8; }
+    .etdm-status--in_progress { background: rgba(78,166,255,.10);  color: #4ea6ff; }
+    .etdm-desc {
+      font-size: 13px;
+      color: #e5e9f0;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .etdm-emp-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: #131924;
+      border-radius: 7px;
+      border: 1px solid #1e293b;
+    }
+    .etdm-emp-main-name { font-size: 13px; font-weight: 600; color: #e5e9f0; }
+    .etdm-emp-main-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: rgba(78,166,255,.12);
+      color: #4ea6ff;
+      margin-left: auto;
+    }
+    .etdm-emp-other {
+      font-size: 13px;
+      color: #e5e9f0;
+      padding: 5px 10px;
+      background: #131924;
+      border-radius: 6px;
+      border: 1px solid #1a2030;
+    }
+    .etdm-emp-none { font-size: 13px; color: #6b7a99; font-style: italic; }
+    .etdm-dates { display: flex; flex-direction: column; gap: 5px; }
+    .etdm-date-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+    .etdm-date-lbl { color: #6b7a99; }
+    .etdm-date-val { color: #e5e9f0; font-weight: 600; }
+
+    /* ═══════════════ TABLET (≥600px) ═══════════════ */
+    @media (min-width: 600px) {
+      .emp-header-inner { padding: 12px 24px; }
+      .emp-avatar     { width: 46px; height: 46px; font-size: 19px; }
+      .emp-name       { font-size: 18px; }
+      .emp-content    { padding: 20px 22px 56px; }
+      .tc-photo-thumb { width: 80px; height: 80px; }
+    }
+
+    /* ═══════════════ DESKTOP (≥1024px) ═══════════════ */
+    @media (min-width: 1024px) {
+      /* ── Header ── */
+      .emp-header {
+        padding: 0;
+      }
+      .emp-header-inner {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 0 48px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        min-height: 70px;
+      }
+      .emp-avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+      .emp-name-wrap {
+        flex: 1;
+        min-width: 0;
+      }
+      .emp-name {
+        font-size: 17px;
+        margin-bottom: 1px;
+      }
+      .emp-name-sub {
+        display: block;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--muted);
+        letter-spacing: .03em;
+      }
+      .emp-logout-btn {
+        padding: 9px 18px;
+        font-size: 13px;
+        min-height: 38px;
+        gap: 7px;
+      }
+
+      /* ── Content wrapper ── */
+      .emp-content {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 32px 48px 56px;
+        width: 100%;
+      }
+
+      /* ── 2-column grid layout ── */
+      .emp-layout {
+        display: grid;
+        grid-template-columns: 288px 1fr;
+        gap: 28px;
+        align-items: start;
+      }
+
+      /* ── Left sidebar ── */
+      .emp-sidebar {
+        position: sticky;
+        top: 86px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .shift-card {
+        margin-bottom: 0;
+      }
+
+      .shift-card-head {
+        padding: 12px 16px;
+      }
+
+      .shift-card-body {
+        padding: 16px;
+      }
+
+      .btn-shift {
+        font-size: 14px;
+        padding: 14px 20px;
+      }
+
+      /* ── Right main — tasks ── */
+      #tasksBlock {
+        min-width: 0;
+      }
+
+      .tasks-heading {
+        font-size: 11px;
+        margin-bottom: 14px;
+        margin-left: 0;
+      }
+
+      /* ── Task cards grid ── */
+      #taskList {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px;
+        align-items: start;
+      }
+
+      .task-card {
+        margin-bottom: 0;
+      }
+
+      .tc-head {
+        padding: 14px 18px 11px;
+      }
+
+      .tc-title {
+        font-size: 14px;
+      }
+
+      .tc-body {
+        padding: 11px 18px 13px;
+      }
+
+      .tc-complete-wrap {
+        padding: 11px 18px 13px;
+      }
+
+      .tc-actions {
+        padding: 10px 18px;
+      }
+
+      .tc-comments,
+      .tc-photos {
+        padding: 11px 18px 13px;
+      }
+
+      .tc-comment-form {
+        padding: 10px 18px 13px;
+      }
+
+      .tc-dates-bar {
+        padding: 7px 18px 9px;
+      }
+
+      .tc-photo-thumb {
+        width: 82px;
+        height: 82px;
+      }
+
+      .tasks-empty {
+        padding: 36px 24px;
+        font-size: 14px;
+      }
+    }
+
+    /* ═══════════════ WIDE DESKTOP (≥1400px) ═══════════════ */
+    @media (min-width: 1400px) {
+      .emp-layout {
+        grid-template-columns: 310px 1fr;
+        gap: 32px;
+      }
+
+      #taskList {
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="emp-header">
+    <div class="emp-header-inner">
+      <div class="emp-avatar" id="empAvatar">—</div>
+      <div class="emp-name-wrap">
+        <div class="emp-name" id="empName">Загрузка...</div>
+        <span class="emp-name-sub">Кабинет сотрудника</span>
+      </div>
+      <button class="emp-logout-btn" id="logoutBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Выйти
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="emp-content">
+    <div class="emp-layout">
+
+      <div class="emp-sidebar">
+        <div class="shift-card">
+          <div class="shift-card-head">
+            <span class="shift-card-label">Статус смены</span>
+            <span class="shift-badge loading" id="shiftBadge">Загрузка</span>
+          </div>
+          <div class="shift-card-body">
+            <button class="btn-shift start" id="toggleShiftBtn">Начать смену</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="emp-main">
+        <div id="tasksBlock">
+          <div class="tasks-heading">Мои задания на сегодня</div>
+          <div id="taskList"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="photoLightbox">
+    <button class="lb-close" id="lbClose">&#x2715;</button>
+    <img class="lb-img" id="lbImg" src="" alt="Фото">
+  </div>
+
+  <!-- CONFIRM DELETE MODAL -->
+  <div id="empConfirmModal">
+    <div class="es-modal">
+      <h3 class="es-title" id="empConfirmTitle">Удалить?</h3>
+      <p class="es-msg" id="empConfirmMsg">Это действие нельзя отменить.</p>
+      <div class="es-actions">
+        <button class="es-btn-cancel" id="empConfirmCancel">Отмена</button>
+        <button class="es-btn-confirm" id="empConfirmOk">Удалить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EARLY STOP MODAL -->
+  <div id="earlyStopOverlay">
+    <div class="es-modal">
+      <h3 class="es-title">Завершить смену?</h3>
+      <p class="es-msg" id="earlyStopEmpMsg">Смена только началась. Вы уверены?</p>
+      <div class="es-actions">
+        <button class="es-btn-cancel"  id="earlyStopEmpCancel">Отмена</button>
+        <button class="es-btn-confirm" id="earlyStopEmpOk">Завершить</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API  = "http://localhost:3000";
+    const user = JSON.parse(localStorage.getItem("employee"));
+    if (!user) location.href = "./index.html";
+    // Нормализуем user.id до числа — защита от строкового типа после JSON round-trip
+    if (user) user.id = Number(user.id);
+
+    /* ── Helpers ── */
+    function fmtTaskDate(iso) {
+      if (!iso) return "";
+      const str = String(iso).replace(" ", "T");
+      const d = new Date(str);
+      if (isNaN(d.getTime())) {
+        const s = str.slice(0, 10).split("-");
+        return `${s[2]}.${s[1]}.${s[0]}`;
+      }
+      const pad = n => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function esc(str) {
+      return String(str || "")
+        .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+    }
+    function photoSrc(p) {
+      if (p.photo_path) return API + p.photo_path;
+      if (p.photo_data && p.photo_data.startsWith("data:")) return p.photo_data;
+      if (p.photo_data) return "data:image/jpeg;base64," + p.photo_data;
+      return null;
+    }
+    async function fetchJSON(url) {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }
+
+    /* ── Header ── */
+    const name = user.name || "Сотрудник";
+    document.getElementById("empName").textContent   = name;
+    document.getElementById("empAvatar").textContent = name.trim().charAt(0).toUpperCase() || "С";
+
+    document.getElementById("logoutBtn").onclick = () => {
+      localStorage.removeItem("employee");
+      location.href = "./index.html";
+    };
+
+    /* ── Confirm modal ── */
+    function showEmpConfirm(title, msg, confirmLabel) {
+      return new Promise(resolve => {
+        const overlay  = document.getElementById("empConfirmModal");
+        const titleEl  = document.getElementById("empConfirmTitle");
+        const msgEl    = document.getElementById("empConfirmMsg");
+        const okBtn    = document.getElementById("empConfirmOk");
+        const noBtn    = document.getElementById("empConfirmCancel");
+        titleEl.textContent = title  || "Подтверждение";
+        msgEl.textContent   = msg    || "";
+        okBtn.textContent   = confirmLabel || "Подтвердить";
+        overlay.classList.add("open");
+        function cleanup(v) {
+          overlay.classList.remove("open");
+          okBtn.removeEventListener("click", yes);
+          noBtn.removeEventListener("click", no);
+          resolve(v);
+        }
+        function yes() { cleanup(true); }
+        function no()  { cleanup(false); }
+        okBtn.addEventListener("click", yes);
+        noBtn.addEventListener("click", no);
+      });
+    }
+
+    /* ── Lightbox ── */
+    const lightbox = document.getElementById("photoLightbox");
+    const lbImg    = document.getElementById("lbImg");
+    document.getElementById("lbClose").onclick = closeLb;
+    lightbox.addEventListener("click", e => { if (e.target === lightbox) closeLb(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeLb(); });
+    function openLb(src) { lbImg.src = src; lightbox.classList.add("open"); }
+    function closeLb()   { lightbox.classList.remove("open"); lbImg.src = ""; }
+
+    /* ── Shift ── */
+    let _shiftStartISO = null;
+    const tasksBlock   = document.getElementById("tasksBlock");
+    const taskList     = document.getElementById("taskList");
+
+    async function loadShiftStatus() {
+      const shifts = await fetchJSON(API + "/api/shifts");
+      const open   = shifts.find(s => Number(s.employee_id) === user.id && s.status === "open");
+      const badge  = document.getElementById("shiftBadge");
+      const btn    = document.getElementById("toggleShiftBtn");
+      if (open) {
+        _shiftStartISO    = open.start_time;
+        badge.textContent = "На смене";  badge.className = "shift-badge on";
+        btn.textContent   = "Завершить смену"; btn.className = "btn-shift stop";
+        tasksBlock.classList.add("visible");
+      } else {
+        _shiftStartISO    = null;
+        badge.textContent = "Вне смены"; badge.className = "shift-badge off";
+        btn.textContent   = "Начать смену"; btn.className = "btn-shift start";
+        tasksBlock.classList.remove("visible");
+        taskList.innerHTML = "";
+      }
+    }
+
+    function confirmEarlyStop(minutes) {
+      return new Promise(resolve => {
+        const overlay = document.getElementById("earlyStopOverlay");
+        const msgEl   = document.getElementById("earlyStopEmpMsg");
+        const okBtn   = document.getElementById("earlyStopEmpOk");
+        const noBtn   = document.getElementById("earlyStopEmpCancel");
+        const label   = minutes < 1 ? "менее минуты" : `${minutes} мин.`;
+        msgEl.textContent = `С начала смены прошло только ${label}. Вы уверены?`;
+        overlay.classList.add("open");
+        function cleanup(v) {
+          overlay.classList.remove("open");
+          okBtn.removeEventListener("click", yes);
+          noBtn.removeEventListener("click", no);
+          resolve(v);
+        }
+        function yes() { cleanup(true); }
+        function no()  { cleanup(false); }
+        okBtn.addEventListener("click", yes);
+        noBtn.addEventListener("click", no);
+      });
+    }
+
+    document.getElementById("toggleShiftBtn").onclick = async function() {
+      const stopping = this.classList.contains("stop");
+      if (stopping) {
+        if (_shiftStartISO) {
+          const elapsed = (Date.now() - new Date(_shiftStartISO).getTime()) / 60000;
+          if (elapsed < 6) {
+            const ok = await confirmEarlyStop(Math.floor(elapsed));
+            if (!ok) return;
+          } else {
+            const ok = await showEmpConfirm("Завершить смену?", "Вы хотите завершить смену?", "Завершить");
+            if (!ok) return;
+          }
+        }
+      } else {
+        const ok = await showEmpConfirm("Начать смену?", "Вы хотите начать смену?", "Начать");
+        if (!ok) return;
+      }
+      await fetch(API + "/api/employees/" + user.id + (stopping ? "/stop" : "/start"), { method: "PATCH" });
+      await loadShiftStatus();
+      if (!stopping) await loadTasks();
+    };
+
+    /* ═══════════════════════════════════════════
+       TASK CARD RENDERING
+    ═══════════════════════════════════════════ */
+
+    /* SVG icons */
+    const IC_CHECK = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    const IC_UNDO  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>`;
+    const IC_CMT   = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+    const IC_PHOTO = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
+
+    function buildCommentsHtml(comments) {
+      if (!comments || comments.length === 0) return "";
+      const items = comments.map(c => {
+        const isOwn = c.author === user.name;
+        const authorHtml = isOwn
+          ? esc(c.author) + " <span style='opacity:.55;font-weight:400'>(вы)</span>"
+          : esc(c.author || "—");
+        const actionsHtml = isOwn
+          ? `<div class="tc-cmt-actions">
+               <button class="tc-cmt-action-btn tc-cmt-edit-btn" data-cid="${c.id}" title="Изменить">✏</button>
+               <button class="tc-cmt-action-btn tc-cmt-del-btn"  data-cid="${c.id}" title="Удалить">✕</button>
+             </div>`
+          : "";
+        return `
+          <div class="tc-comment-item ${isOwn ? "own" : ""}" data-cid="${c.id}">
+            <div class="tc-comment-dot ${isOwn ? "own" : "other"}"></div>
+            <div class="tc-comment-inner">
+              <div class="tc-comment-author-row">
+                <div class="tc-comment-author ${isOwn ? "own" : "other"}">${authorHtml}</div>
+                ${actionsHtml}
+              </div>
+              <div class="tc-comment-text">${esc(c.comment || "")}</div>
+            </div>
+          </div>`;
+      }).join("");
+      return `
+        <div class="tc-comments" data-cmt-section>
+          <div class="tc-section-label">Комментарии · ${comments.length}</div>
+          ${items}
+        </div>`;
+    }
+
+    function buildPhotosHtml(photos) {
+      if (!photos || photos.length === 0) return "";
+      const thumbs = photos.map((p, i) => {
+        const src = photoSrc(p);
+        if (!src) return "";
+        const canDel = Number(p.employee_id) === user.id;
+        const delBtn = canDel
+          ? `<button class="tc-photo-del-btn" data-pid="${p.id}" title="Удалить">×</button>`
+          : "";
+        return `<div class="tc-photo-thumb" data-idx="${i}" data-pid="${p.id}">`
+          + `<img src="${esc(src)}" alt="Фото ${i+1}" loading="lazy">${delBtn}</div>`;
+      }).join("");
+      if (!thumbs.trim()) return "";
+      return `
+        <div class="tc-photos" data-photo-section>
+          <div class="tc-section-label">Фото · ${photos.length}</div>
+          <div class="tc-photo-grid">${thumbs}</div>
+        </div>`;
+    }
+
+    function attachPhotoLightbox(card, srcs) {
+      card.querySelectorAll(".tc-discussion .tc-photo-thumb[data-idx]").forEach(el => {
+        el.addEventListener("click", ev => {
+          if (!ev.target.closest(".tc-photo-del-btn")) openLb(srcs[Number(el.dataset.idx)]);
+        });
+      });
+    }
+
+    /* ── Comment discussion toggle + photo upload ── */
+    function attachCommentForm(card, taskId, isDone) {
+      const discussion = card.querySelector(".tc-discussion");
+      const form       = discussion.querySelector(".tc-comment-form");
+      const textarea   = form.querySelector(".tc-comment-textarea");
+      const sendBtn    = form.querySelector(".tc-form-btn-send");
+      const cancelBtn  = form.querySelector(".tc-form-btn-cancel");
+      const addBtn     = card.querySelector(".tc-add-comment-btn");
+      const fileInput  = form.querySelector(".tc-photo-file-input");
+
+      // Для выполненного задания — только чтение
+      const closeOthers = () => {
+        taskList.querySelectorAll(".tc-discussion.open").forEach(d => {
+          if (d !== discussion) d.classList.remove("open");
+        });
+      };
+
+      if (isDone) {
+        form.style.display = "none";
+        addBtn.addEventListener("click", () => {
+          const opening = !discussion.classList.contains("open");
+          if (opening) closeOthers();
+          discussion.classList.toggle("open");
+        });
+        cancelBtn.addEventListener("click", () => discussion.classList.remove("open"));
+        return;
+      }
+
+      // Открыть/закрыть блок обсуждения
+      addBtn.addEventListener("click", () => {
+        const opening = !discussion.classList.contains("open");
+        if (opening) closeOthers();
+        discussion.classList.toggle("open");
+        if (opening) textarea.focus();
+      });
+
+      // «Отмена» — закрыть весь блок обсуждения
+      cancelBtn.addEventListener("click", () => {
+        discussion.classList.remove("open");
+        textarea.value = "";
+      });
+
+      sendBtn.addEventListener("click", async () => {
+        const text = textarea.value.trim();
+        if (!text) return;
+        sendBtn.disabled = true;
+        try {
+          const res = await fetch(API + "/api/tasks/" + taskId + "/comments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ author: user.name, comment: text })
+          }).then(r => r.json());
+          if (res.error) { sendBtn.disabled = false; return; }
+
+          const comments   = await fetchJSON(API + "/api/tasks/" + taskId + "/comments").catch(() => []);
+          const oldSection = discussion.querySelector("[data-cmt-section]");
+          const newHtml    = buildCommentsHtml(comments);
+          if (oldSection) { oldSection.outerHTML = newHtml || ""; }
+          else if (newHtml) { form.insertAdjacentHTML("beforebegin", newHtml); }
+
+          // Обновить бейдж на кнопке
+          const photos = await fetchJSON(API + "/api/tasks/" + taskId + "/photos").catch(() => []);
+          _updateCmtBadge(card, comments.length + photos.length);
+
+          textarea.value = "";
+        } finally { sendBtn.disabled = false; }
+      });
+
+      // Загрузка фото из формы комментария
+      if (fileInput) {
+        fileInput.addEventListener("change", async () => {
+          const file = fileInput.files[0];
+          if (!file) return;
+          fileInput.value = "";
+
+          let photoSection = discussion.querySelector("[data-photo-section]");
+          if (!photoSection) {
+            form.insertAdjacentHTML("beforebegin",
+              `<div class="tc-photos" data-photo-section><div class="tc-section-label">Фото</div><div class="tc-photo-grid"></div></div>`);
+            photoSection = discussion.querySelector("[data-photo-section]");
+          }
+          const grid    = photoSection.querySelector(".tc-photo-grid");
+          const spinner = document.createElement("div");
+          spinner.className = "tc-photo-uploading";
+          spinner.innerHTML = `<div class="tc-photo-uploading-spinner"></div>`;
+          grid.appendChild(spinner);
+
+          try {
+            const fd = new FormData();
+            fd.append("photo", file);
+            const up = await fetch(API + "/api/upload/task-photo", { method: "POST", body: fd }).then(r => r.json());
+            if (up.error) throw new Error(up.error);
+
+            await fetch(API + "/api/tasks/" + taskId + "/photos", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ photo_path: up.url, employeeId: user.id })
+            });
+
+            const photos  = await fetchJSON(API + "/api/tasks/" + taskId + "/photos").catch(() => []);
+            const newHtml = buildPhotosHtml(photos);
+            if (newHtml) {
+              photoSection.outerHTML = newHtml;
+              const ns   = discussion.querySelector("[data-photo-section]");
+              const srcs = photos.map(p => photoSrc(p)).filter(Boolean);
+              if (ns) ns.querySelectorAll(".tc-photo-thumb[data-idx]").forEach(el => {
+                el.addEventListener("click", () => openLb(srcs[Number(el.dataset.idx)]));
+              });
+            } else { spinner.remove(); }
+
+            // Обновить бейдж на кнопке
+            const comments = await fetchJSON(API + "/api/tasks/" + taskId + "/comments").catch(() => []);
+            _updateCmtBadge(card, comments.length + photos.length);
+          } catch (err) {
+            spinner.remove();
+            console.error("Ошибка загрузки фото:", err);
+          }
+        });
+      }
+    }
+
+    function _updateCmtBadge(card, total) {
+      const btn   = card.querySelector(".tc-add-comment-btn");
+      if (!btn) return;
+      let badge = btn.querySelector(".tc-cmt-count");
+      if (total > 0) {
+        if (!badge) { badge = document.createElement("span"); badge.className = "tc-cmt-count"; btn.appendChild(badge); }
+        badge.textContent = total;
+      } else if (badge) { badge.remove(); }
+    }
+
+    /* ── Handlers: edit/delete own comments and photos ── */
+    function attachDiscussionHandlers(card, taskId) {
+      const discussion = card.querySelector(".tc-discussion");
+
+      discussion.addEventListener("click", async e => {
+
+        /* ── Удалить своё фото ── */
+        const photoDelBtn = e.target.closest(".tc-photo-del-btn");
+        if (photoDelBtn) {
+          e.stopPropagation();
+          const pid = Number(photoDelBtn.dataset.pid);
+          if (!pid) return;
+          if (!await showEmpConfirm("Удалить фото?", "Вы хотите удалить это фото?", "Удалить")) return;
+          try {
+            const r = await fetch(`${API}/api/tasks/photos/${pid}/by-employee`, {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ employeeId: user.id })
+            });
+            const data = await r.json();
+            if (!r.ok) { console.error(data.error); return; }
+            const photos = await fetchJSON(API + "/api/tasks/" + taskId + "/photos").catch(() => []);
+            const oldSec = discussion.querySelector("[data-photo-section]");
+            const newHtml = buildPhotosHtml(photos);
+            if (oldSec) { oldSec.outerHTML = newHtml || ""; }
+            if (newHtml) {
+              const ns = discussion.querySelector("[data-photo-section]");
+              const srcs = photos.map(p => photoSrc(p)).filter(Boolean);
+              ns?.querySelectorAll(".tc-photo-thumb[data-idx]").forEach(el => {
+                el.addEventListener("click", ev => {
+                  if (!ev.target.closest(".tc-photo-del-btn")) openLb(srcs[Number(el.dataset.idx)]);
+                });
+              });
+            }
+            const cmts = discussion.querySelectorAll(".tc-comment-item").length;
+            _updateCmtBadge(card, cmts + photos.length);
+          } catch (err) { console.error("Ошибка удаления фото:", err); }
+          return;
+        }
+
+        /* ── Удалить свой комментарий ── */
+        const cmtDelBtn = e.target.closest(".tc-cmt-del-btn");
+        if (cmtDelBtn) {
+          e.stopPropagation();
+          const cid = Number(cmtDelBtn.dataset.cid);
+          if (!cid) return;
+          if (!await showEmpConfirm("Удалить комментарий?", "Вы хотите удалить этот комментарий?", "Удалить")) return;
+          try {
+            const r = await fetch(`${API}/api/tasks/${taskId}/comments/${cid}/by-employee`, {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ employeeName: user.name })
+            });
+            const data = await r.json();
+            if (!r.ok) { console.error(data.error); return; }
+            const item    = discussion.querySelector(`.tc-comment-item[data-cid="${cid}"]`);
+            const section = item?.closest("[data-cmt-section]");
+            item?.remove();
+            if (section) {
+              const left = section.querySelectorAll(".tc-comment-item").length;
+              if (!left) { section.remove(); }
+              else {
+                const lbl = section.querySelector(".tc-section-label");
+                if (lbl) lbl.textContent = `Комментарии · ${left}`;
+              }
+            }
+            const photos = discussion.querySelectorAll(".tc-photo-thumb").length;
+            const cmts   = discussion.querySelectorAll(".tc-comment-item").length;
+            _updateCmtBadge(card, cmts + photos);
+          } catch (err) { console.error("Ошибка удаления комментария:", err); }
+          return;
+        }
+
+        /* ── Редактировать свой комментарий ── */
+        const cmtEditBtn = e.target.closest(".tc-cmt-edit-btn");
+        if (cmtEditBtn) {
+          e.stopPropagation();
+          const cid  = Number(cmtEditBtn.dataset.cid);
+          const item = discussion.querySelector(`.tc-comment-item[data-cid="${cid}"]`);
+          if (!item) return;
+          if (item.querySelector(".tc-cmt-edit-form")) return; // already editing
+          const textEl = item.querySelector(".tc-comment-text");
+          const original = textEl.textContent;
+
+          const editForm = document.createElement("div");
+          editForm.className = "tc-cmt-edit-form";
+          const ta = document.createElement("textarea");
+          ta.className = "tc-cmt-edit-ta";
+          ta.rows = Math.max(2, original.split("\n").length);
+          ta.value = original;
+          const acts = document.createElement("div");
+          acts.className = "tc-cmt-edit-actions";
+          acts.innerHTML = `<button class="tc-cmt-edit-cancel">Отмена</button><button class="tc-cmt-edit-save">Сохранить</button>`;
+          editForm.appendChild(ta);
+          editForm.appendChild(acts);
+          textEl.style.display = "none";
+          textEl.after(editForm);
+          ta.focus();
+
+          acts.querySelector(".tc-cmt-edit-cancel").onclick = () => {
+            editForm.remove();
+            textEl.style.display = "";
+          };
+          acts.querySelector(".tc-cmt-edit-save").onclick = async () => {
+            const newText = ta.value.trim();
+            if (!newText) return;
+            if (newText === original) { editForm.remove(); textEl.style.display = ""; return; }
+            try {
+              const r = await fetch(`${API}/api/tasks/${taskId}/comments/${cid}/by-employee`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ comment: newText, employeeName: user.name })
+              });
+              const data = await r.json();
+              if (!r.ok) { console.error(data.error); return; }
+              textEl.textContent = newText;
+              editForm.remove();
+              textEl.style.display = "";
+            } catch (err) { console.error("Ошибка редактирования:", err); }
+          };
+          return;
+        }
+      });
+    }
+
+    /* ── Complete / cancel task (только главный сотрудник) ── */
+    function attachCompleteTask(card, taskId) {
+      const btn = card.querySelector(".btn-complete-task");
+      if (!btn) return;
+
+      btn.addEventListener("click", async () => {
+        const isCancel = btn.classList.contains("cancel");
+        const title  = isCancel ? "Отменить выполнение?" : "Завершить задание?";
+        const msg    = isCancel ? "Вы хотите отменить выполнение задания?" : "Вы хотите завершить задание?";
+        const label  = isCancel ? "Отменить выполнение" : "Завершить";
+        const ok = await showEmpConfirm(title, msg, label);
+        if (!ok) return;
+
+        btn.disabled = true;
+        try {
+          const res = await fetch(API + "/api/tasks/" + taskId + "/complete-by-employee", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ employeeId: user.id })
+          }).then(r => r.json());
+
+          if (res.error) { btn.disabled = false; return; }
+
+          const nowDone = res.status === "done";
+          const badge   = card.querySelector(".tc-status");
+
+          if (nowDone) {
+            card.classList.add("tc--done");
+            if (badge) { badge.textContent = "Выполнено"; badge.className = "tc-status done"; }
+            btn.className = "btn-complete-task cancel";
+            btn.innerHTML = IC_UNDO + " Отменить выполнение";
+          } else {
+            card.classList.remove("tc--done");
+            if (badge) { badge.textContent = "В работе"; badge.className = "tc-status in-progress"; }
+            btn.className = "btn-complete-task";
+            btn.innerHTML = IC_CHECK + " Завершить задание";
+          }
+          btn.disabled = false;
+        } catch (err) {
+          console.error("Ошибка изменения статуса:", err);
+          btn.disabled = false;
+        }
+      });
+    }
+
+    /* ── Build one task card ── */
+    function createTaskCard(t, comments, photos) {
+      const isDone    = t.status === "done";
+      // Главный сотрудник: только он получает кнопку выполнения
+      const isMain    = Number(t.main_employee_id) === user.id;
+      const photoSrcs = photos.map(p => photoSrc(p)).filter(Boolean);
+
+      // Блок кнопки выполнения — рендерим только для главного
+      let completeWrapHtml = "";
+      if (isMain) {
+        const cls  = isDone ? "btn-complete-task cancel" : "btn-complete-task";
+        const icon = isDone ? IC_UNDO : IC_CHECK;
+        const lbl  = isDone ? "Отменить выполнение" : "Завершить задание";
+        completeWrapHtml = `
+          <div class="tc-complete-wrap">
+            <button class="${cls}">${icon} ${lbl}</button>
+          </div>`;
+      }
+      // Обычные участники — кнопки нет вообще
+
+      const card = document.createElement("div");
+      card.className = "task-card" + (isDone ? " tc--done" : "");
+      card.dataset.taskId = t.id;
+
+      const total     = comments.length + photos.length;
+      const cntBadge  = total > 0 ? ` <span class="tc-cmt-count">${total}</span>` : "";
+
+      card.innerHTML = `
+        <div class="tc-head">
+          <h3 class="tc-title">${esc(t.title || "(без заголовка)")}</h3>
+          <span class="tc-status ${isDone ? "done" : "in-progress"}">${isDone ? "Выполнено" : "В работе"}</span>
+        </div>
+        <div class="tc-body">
+          <div class="tc-section-label">Описание</div>
+          <p class="tc-desc">${esc(t.description || "—")}</p>
+        </div>
+        ${completeWrapHtml}
+        <div class="tc-dates-bar">
+          <div class="tc-dates-row"><span class="tc-dates-lbl">Создано</span><span class="tc-dates-val">${fmtTaskDate(t.created_at || t.date)}</span></div>
+          ${isDone && t.completed_at ? `<div class="tc-dates-row"><span class="tc-dates-lbl">Выполнено</span><span class="tc-dates-val">${fmtTaskDate(t.completed_at)}</span></div>` : ""}
+        </div>
+        <div class="tc-actions">
+          <button class="tc-action-btn tc-add-comment-btn">${IC_CMT} Комментарии${cntBadge}</button>
+        </div>
+        <div class="tc-discussion">
+          ${buildCommentsHtml(comments)}
+          ${buildPhotosHtml(photos)}
+          <div class="tc-comment-form">
+            <textarea class="tc-comment-textarea" placeholder="Введите комментарий..." rows="3"></textarea>
+            <div class="tc-comment-form-actions">
+              <label class="tc-form-btn-photo-label" title="Прикрепить фото">
+                ${IC_PHOTO}
+                <input type="file" accept="image/*" class="tc-photo-file-input" style="display:none">
+              </label>
+              <div class="tc-form-actions-right">
+                <button class="tc-form-btn-cancel">Закрыть</button>
+                <button class="tc-form-btn-send">Отправить</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      attachPhotoLightbox(card, photoSrcs);
+      attachCommentForm(card, t.id, isDone);
+      attachDiscussionHandlers(card, t.id);
+      attachCompleteTask(card, t.id);  // ничего не делает если кнопки нет
+
+      return card;
+    }
+
+    /* ── Task detail modal ── */
+    let _empMap = {};
+
+    function openEmpTaskDetailModal(t) {
+      const isDone   = t.status === "done";
+      const mainId   = t.main_employee_id || null;
+      const mainName = mainId ? (_empMap[mainId] || "—") : null;
+      const allIds   = [...new Set([...(t.assignedEmployees || []), ...(t.participants || [])])];
+      const otherIds = allIds.filter(id => id !== mainId);
+      const otherNames = otherIds.map(id => _empMap[id]).filter(Boolean);
+
+      const empHtml = (() => {
+        const parts = [];
+        if (mainName) parts.push(
+          '<div class="etdm-emp-main">' +
+          '<span class="etdm-emp-main-name">' + esc(mainName) + '</span>' +
+          '<span class="etdm-emp-main-badge">Главный</span>' +
+          '</div>'
+        );
+        otherNames.forEach(n => parts.push('<div class="etdm-emp-other">' + esc(n) + '</div>'));
+        if (!mainName && !otherNames.length) parts.push('<div class="etdm-emp-none">Не назначен</div>');
+        return parts.join("");
+      })();
+
+      document.getElementById("etdmTitle").textContent = t.title || "(без заголовка)";
+      document.getElementById("etdmBody").innerHTML =
+        '<div class="etdm-section">' +
+          '<div class="etdm-label">Статус</div>' +
+          '<div class="etdm-status etdm-status--' + (isDone ? "done" : "in_progress") + '">' +
+            (isDone ? "Выполнено" : "В работе") +
+          '</div>' +
+        '</div>' +
+        (t.description
+          ? '<div class="etdm-section"><div class="etdm-label">Описание</div><div class="etdm-desc">' + esc(t.description) + '</div></div>'
+          : "") +
+        '<div class="etdm-section">' +
+          '<div class="etdm-label">Сотрудники</div>' +
+          empHtml +
+        '</div>' +
+        '<div class="etdm-section">' +
+          '<div class="etdm-label">Даты</div>' +
+          '<div class="etdm-dates">' +
+            '<div class="etdm-date-row"><span class="etdm-date-lbl">Создано</span><span class="etdm-date-val">' + fmtTaskDate(t.created_at || t.date) + '</span></div>' +
+            (isDone && t.completed_at
+              ? '<div class="etdm-date-row"><span class="etdm-date-lbl">Выполнено</span><span class="etdm-date-val">' + fmtTaskDate(t.completed_at) + '</span></div>'
+              : "") +
+          '</div>' +
+        '</div>';
+
+      document.getElementById("empTaskDetailModal").classList.add("open");
+    }
+
+    document.addEventListener("click", e => {
+      if (e.target.closest && e.target.closest("#etdmClose")) {
+        document.getElementById("empTaskDetailModal").classList.remove("open");
+      } else if (e.target.id === "empTaskDetailModal") {
+        e.target.classList.remove("open");
+      }
+    });
+
+    /* ── Load & render tasks ── */
+    async function loadTasks() {
+      const [all, employees] = await Promise.all([
+        fetchJSON(API + "/api/tasks"),
+        fetchJSON(API + "/api/employees").catch(() => [])
+      ]);
+      _empMap = {};
+      employees.forEach(e => { _empMap[e.id] = e.name; });
+
+      const today = new Date().toISOString().slice(0, 10);
+
+      // Показываем задания, в которых сотрудник является назначенным участником или главным.
+      // Невыполненные переносятся: дата <= сегодня. Выполненные — только в свой день.
+      const mine = all.filter(t =>
+        (t.status !== "done"
+          ? t.date <= today
+          : (t.completed_at || "").slice(0, 10) === today) &&
+        (
+          Number(t.main_employee_id) === user.id ||
+          (Array.isArray(t.assignedEmployees) && t.assignedEmployees.map(Number).includes(user.id)) ||
+          (Array.isArray(t.participants)       && t.participants.map(Number).includes(user.id))
+        )
+      ).sort((a, b) => (a.status === "done") - (b.status === "done"));
+
+      taskList.innerHTML = "";
+      if (mine.length === 0) {
+        taskList.innerHTML = `<div class="tasks-empty">Нет заданий на сегодня</div>`;
+        return;
+      }
+
+      // Параллельно загружаем комментарии и фото для всех заданий
+      const extras = await Promise.all(mine.map(t =>
+        Promise.all([
+          fetchJSON(API + "/api/tasks/" + t.id + "/comments").catch(() => []),
+          t.photoCount > 0
+            ? fetchJSON(API + "/api/tasks/" + t.id + "/photos").catch(() => [])
+            : Promise.resolve([])
+        ])
+      ));
+
+      mine.forEach((t, i) => {
+        const [comments, photos] = extras[i];
+        const card = createTaskCard(t, comments, photos);
+        card.addEventListener("click", e => {
+          if (e.target.closest("button, input, textarea, label, a")) return;
+          openEmpTaskDetailModal(t);
+        });
+        taskList.appendChild(card);
+      });
+    }
+
+    /* ── Auto-refresh every 5 seconds ── */
+    let _busy = false;
+
+    async function autoRefresh() {
+      if (_busy) return;
+      _busy = true;
+      try {
+        await loadShiftStatus();
+        if (tasksBlock.classList.contains("visible")) {
+          // Не обновляем если открыто обсуждение — не прерываем ввод
+          const discussionOpen = taskList.querySelector(".tc-discussion.open");
+          if (!discussionOpen) await loadTasks();
+        }
+      } catch (err) {
+        console.error("Ошибка обновления:", err);
+      } finally {
+        _busy = false;
+      }
+    }
+
+    (async function init() {
+      await autoRefresh();
+      setInterval(autoRefresh, 5000);
+    })();
+  </script>
+
+  <!-- Модалка: детали задания -->
+  <div id="empTaskDetailModal">
+    <div class="etdm-modal">
+      <div class="etdm-header">
+        <span class="etdm-title" id="etdmTitle"></span>
+        <button class="etdm-close" id="etdmClose" aria-label="Закрыть">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="etdm-body" id="etdmBody"></div>
+    </div>
+  </div>
+</body>
+</html>
