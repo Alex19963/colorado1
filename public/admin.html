@@ -1236,7 +1236,7 @@
     }
 
     // Фоновая проверка токена на сервере
-    fetch("http://localhost:3000/api/admin/verify", {
+    fetch("/api/admin/verify", {
       headers: { "x-admin-token": token }
     }).then(res => {
       if (!res.ok) {

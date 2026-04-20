@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = "";
 
 /* ── Автоматически добавлять x-admin-token к запросам на API ── */
 (function patchFetch() {

@@ -1,4 +1,4 @@
-const API = "http://localhost:3000";
+const API = "";
 
 document.getElementById("loginBtn").addEventListener("click", async () => {
   const login = document.getElementById("login").value.trim();
